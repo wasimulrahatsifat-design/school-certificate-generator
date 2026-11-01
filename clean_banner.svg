@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="62" viewBox="0 0 460 62">
+    <defs>
+      <g id="floralFlourishMain">
+        <path d="M 0 0 C 15 -12, 35 -15, 45 -5 C 38 2, 25 5, 0 0 Z" fill="#dc2626"/>
+        <path d="M 5 -2 C 22 -18, 42 -22, 52 -10 C 42 -2, 28 3, 5 -2 Z" fill="#dc2626"/>
+        <path d="M 0 4 C 18 14, 38 18, 48 8 C 38 0, 24 -1, 0 4 Z" fill="#dc2626"/>
+        <path d="M 5 6 C 22 20, 42 24, 52 12 C 42 4, 28 2, 5 6 Z" fill="#dc2626"/>
+        <circle cx="50" cy="0" r="4.5" fill="#dc2626"/>
+      </g>
+    </defs>
+
+    <!-- Left Flourish -->
+    <g transform="translate(62, 31) scale(0.95, 0.95)">
+      <use href="#floralFlourishMain" transform="scale(-1, 1)"/>
+    </g>
+
+    <!-- Right Flourish -->
+    <g transform="translate(398, 31) scale(0.95, 0.95)">
+      <use href="#floralFlourishMain"/>
+    </g>
+
+    <!-- Center Yellow Capsule Pill -->
+    <g transform="translate(80, 3)">
+      <rect x="0" y="0" width="300" height="56" rx="28" ry="28" fill="#ffe600" stroke="#dc2626" stroke-width="2.8"/>
+      <rect x="3.5" y="3.5" width="293" height="49" rx="24.5" ry="24.5" fill="none" stroke="#dc2626" stroke-width="1.2" opacity="0.85"/>
+      <text x="150" y="40" font-family="'SutonnyOMJ', 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="37" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="1.5">প্রত্যয়নপত্র</text>
+    </g>
+  </svg>
