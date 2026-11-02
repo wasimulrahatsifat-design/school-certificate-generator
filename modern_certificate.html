@@ -736,8 +736,8 @@
       justify-content: center;
     }
     #live_qrcode_canvas svg, #live_qrcode_canvas img, #live_qrcode_canvas canvas {
-      width: 96px;
-      height: 96px;
+      width: 90px;
+      height: 90px;
       display: block;
     }
 
@@ -1331,19 +1331,19 @@
       const year = document.getElementById('in_year') ? document.getElementById('in_year').value.trim() : '২০২৬';
       const serial = (document.getElementById('in_serial') ? document.getElementById('in_serial').value.trim() : '') || 'CERT-2026-PC-0142';
 
-      // Direct text verification card: Google Lens / cameras display this directly on screen without opening any website
-      const verifyData = '=== প্রত্যয়নপত্র সত্যতা যাচাই ===\n' +
-        'প্রতিষ্ঠান: ' + school + '\n' +
-        'শিক্ষার্থী: ' + name + '\n' +
-        'শ্রেণি: ' + cls + ' | রোল: ' + roll + ' | শিক্ষাবর্ষ: ' + year + '\n' +
-        'সনদ ট্র্যাকিং নং: ' + serial + '\n' +
-        'স্ট্যাটাস: আসল ও অনুমোদিত সনদ (VERIFIED)';
+      // Concise verification card: Scans instantly (under 49 modules) on Google Lens without opening any website
+      const verifyData = 'CERTIFICATE VERIFIED\n' +
+        'Serial: ' + serial + '\n' +
+        'Name: ' + name + '\n' +
+        'Class: ' + cls + ' | Roll: ' + roll + '\n' +
+        'Year: ' + year + '\n' +
+        'Status: ORIGINAL & AUTHENTIC';
 
       try {
         const qr = qrcode(0, 'L');
         qr.addData(unescape(encodeURIComponent(verifyData)));
         qr.make();
-        qrBox.innerHTML = qr.createSvgTag(2, 2);
+        qrBox.innerHTML = qr.createSvgTag(2.5, 2);
       } catch (e) {
         console.error('QR creation error:', e);
       }
