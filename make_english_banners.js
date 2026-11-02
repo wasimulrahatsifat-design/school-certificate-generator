@@ -1,7 +1,9 @@
 const fs = require('fs');
 
 function makeEnglishBanners() {
-  // 1. MAIN CERTIFICATE BANNER (CERTIFICATE)
+  const textBase64 = 'data:image/png;base64,' + fs.readFileSync('certificate_text_en.png').toString('base64');
+
+  // 1. MAIN CERTIFICATE BANNER (CERTIFICATE in Cinzel Bold)
   const mw = 460;
   const mh = 62;
   const mainSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${mw}" height="${mh}" viewBox="0 0 ${mw} ${mh}">
@@ -29,12 +31,12 @@ function makeEnglishBanners() {
     <g transform="translate(75, 3)">
       <rect x="0" y="0" width="310" height="56" rx="28" ry="28" fill="#ffe600" stroke="#dc2626" stroke-width="2.8"/>
       <rect x="3.5" y="3.5" width="303" height="49" rx="24.5" ry="24.5" fill="none" stroke="#dc2626" stroke-width="1.2" opacity="0.85"/>
-      <text x="155" y="39" font-family="'Cinzel', 'Times New Roman', 'Georgia', serif" font-size="31" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="3.5">CERTIFICATE</text>
+      <image href="${textBase64}" x="25" y="15" width="260" height="26" preserveAspectRatio="xMidYMid meet" />
     </g>
   </svg>`;
 
   fs.writeFileSync('clean_banner_en.svg', mainSvg);
-  console.log('clean_banner_en.svg generated successfully with CERTIFICATE!');
+  console.log('clean_banner_en.svg generated successfully with Cinzel Bold CERTIFICATE!');
 
   // 2. STUB BANNER (CERTIFICATE - scaled for stub)
   const sw = 260;
@@ -64,19 +66,19 @@ function makeEnglishBanners() {
     <g transform="translate(42, 2)">
       <rect x="0" y="0" width="176" height="32" rx="16" ry="16" fill="#ffe600" stroke="#dc2626" stroke-width="1.8"/>
       <rect x="2.5" y="2.5" width="171" height="27" rx="13.5" ry="13.5" fill="none" stroke="#dc2626" stroke-width="0.8" opacity="0.85"/>
-      <text x="88" y="22" font-family="'Cinzel', 'Times New Roman', 'Georgia', serif" font-size="18" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="1.8">CERTIFICATE</text>
+      <image href="${textBase64}" x="14" y="8.5" width="148" height="15" preserveAspectRatio="xMidYMid meet" />
     </g>
   </svg>`;
 
   fs.writeFileSync('stub_banner_en.svg', stubSvg);
-  console.log('stub_banner_en.svg generated successfully with CERTIFICATE!');
+  console.log('stub_banner_en.svg generated successfully with Cinzel Bold CERTIFICATE!');
 
   // Update assets_base64.json with English banners
   const assets = JSON.parse(fs.readFileSync('assets_base64.json', 'utf8'));
   assets.clean_banner_en = 'data:image/svg+xml;base64,' + Buffer.from(mainSvg).toString('base64');
   assets.stub_banner_en = 'data:image/svg+xml;base64,' + Buffer.from(stubSvg).toString('base64');
   fs.writeFileSync('assets_base64.json', JSON.stringify(assets, null, 2));
-  console.log('assets_base64.json updated with CERTIFICATE banners!');
+  console.log('assets_base64.json updated with Cinzel Bold banners!');
 }
 
 makeEnglishBanners();

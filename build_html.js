@@ -213,17 +213,19 @@ const htmlContent = `<!DOCTYPE html>
     }
     .sig-img {
       max-height: 48px;
-      max-width: 145px;
+      max-width: 180px;
       object-fit: contain;
       display: block;
       pointer-events: none;
+      transition: max-height 0.15s ease;
     }
     .stub-sig-img {
       max-height: 28px;
-      max-width: 85px;
+      max-width: 100px;
       object-fit: contain;
       display: block;
       pointer-events: none;
+      transition: max-height 0.15s ease;
     }
     .sig-upload-btn-wrap {
       display: flex;
@@ -252,6 +254,41 @@ const htmlContent = `<!DOCTYPE html>
     }
     .btn-remove-sig:hover {
       background: #dc2626;
+    }
+
+    .sig-size-ctrls {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 4px;
+      padding: 2px 5px;
+      gap: 4px;
+      z-index: 25;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .sig-zone:hover .sig-size-ctrls {
+      display: flex;
+    }
+    .btn-sig-adj {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      width: 20px;
+      height: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-sig-adj:hover {
+      background: #1d4ed8;
     }
 
     /* CERTIFICATE VIEWPORT (Strict A4 Landscape 297mm x 210mm) */
@@ -603,7 +640,7 @@ const htmlContent = `<!DOCTYPE html>
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .top-toolbar, .form-panel, .cut-line-indicator {
+      .top-toolbar, .form-panel, .cut-line-indicator, .sig-size-ctrls {
         display: none !important;
       }
       .certificate-viewport {
@@ -696,23 +733,37 @@ const htmlContent = `<!DOCTYPE html>
       <input type="text" id="input_date" value="" placeholder="তারিখ (ঐচ্ছিক)" oninput="syncData()">
     </div>
 
-    <!-- SIGNATURE UPLOADS -->
+    <!-- SIGNATURE UPLOADS & RESIZING -->
     <div class="form-group">
       <label>লেখকের স্বাক্ষর (সিগনেচার):</label>
       <input type="file" id="upload_writer_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'writer')">
       <div class="sig-upload-btn-wrap">
-        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('writer')">✍️ স্বাক্ষর আপলোড</button>
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('writer')">✍️ আপলোড</button>
         <img id="preview_writer_sig" class="sig-preview-thumb" alt="Preview">
         <button type="button" id="btn_remove_writer_sig" class="btn-remove-sig" onclick="removeSignature('writer')">✕ সরান</button>
+      </div>
+      <div id="ctrl_writer_sig_size" style="display: none; margin-top: 6px; align-items: center; gap: 8px;">
+        <span style="font-size: 0.78rem; color: #64748b; font-weight: 600;">সাইজ:</span>
+        <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', -4)">−</button>
+        <input type="range" id="scale_writer_sig" min="24" max="110" value="48" style="flex: 1; accent-color: #2563eb;" oninput="resizeSig('writer', this.value)">
+        <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4)">+</button>
+        <span id="val_writer_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">48px</span>
       </div>
     </div>
     <div class="form-group">
       <label>প্রধান শিক্ষকের স্বাক্ষর (সিগনেচার):</label>
       <input type="file" id="upload_headmaster_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'headmaster')">
       <div class="sig-upload-btn-wrap">
-        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('headmaster')">✍️ স্বাক্ষর আপলোড</button>
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('headmaster')">✍️ আপলোড</button>
         <img id="preview_headmaster_sig" class="sig-preview-thumb" alt="Preview">
         <button type="button" id="btn_remove_headmaster_sig" class="btn-remove-sig" onclick="removeSignature('headmaster')">✕ সরান</button>
+      </div>
+      <div id="ctrl_headmaster_sig_size" style="display: none; margin-top: 6px; align-items: center; gap: 8px;">
+        <span style="font-size: 0.78rem; color: #64748b; font-weight: 600;">সাইজ:</span>
+        <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', -4)">−</button>
+        <input type="range" id="scale_headmaster_sig" min="24" max="120" value="52" style="flex: 1; accent-color: #2563eb;" oninput="resizeSig('headmaster', this.value)">
+        <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4)">+</button>
+        <span id="val_headmaster_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">52px</span>
       </div>
     </div>
 
@@ -866,7 +917,11 @@ const htmlContent = `<!DOCTYPE html>
               <div class="footer-left-row" style="position: relative;">
                 <span>লেখক:</span>
                 <div style="position: relative; display: inline-flex; align-items: baseline;">
-                  <div id="main_writer_sig_wrap" class="sig-zone" onclick="triggerSigUpload('writer')" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড বা পরিবর্তন করুন">
+                  <div id="main_writer_sig_wrap" class="sig-zone" onclick="triggerSigUpload('writer')" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড/পরিবর্তন করুন">
+                    <div class="sig-size-ctrls">
+                      <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('writer', -4);" title="ছোটো করুন">−</button>
+                      <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('writer', 4);" title="বড় করুন">+</button>
+                    </div>
                     <img id="main_writer_sig_img" class="sig-img" src="" alt="লেখকের স্বাক্ষর">
                   </div>
                   <span class="footer-dotted" id="main_view_writer" contenteditable="true"></span>
@@ -880,7 +935,11 @@ const htmlContent = `<!DOCTYPE html>
 
             <div class="footer-right">
               <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-                <div id="main_headmaster_sig_wrap" class="sig-zone" onclick="triggerSigUpload('headmaster')" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড বা পরিবর্তন করুন">
+                <div id="main_headmaster_sig_wrap" class="sig-zone" onclick="triggerSigUpload('headmaster')" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড/পরিবর্তন করুন">
+                  <div class="sig-size-ctrls">
+                    <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('headmaster', -4);" title="ছোটো করুন">−</button>
+                    <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('headmaster', 4);" title="বড় করুন">+</button>
+                  </div>
                   <img id="main_headmaster_sig_img" class="sig-img" src="" alt="প্রধান শিক্ষকের স্বাক্ষর">
                 </div>
                 <div class="sign-line"></div>
@@ -909,6 +968,9 @@ const htmlContent = `<!DOCTYPE html>
         logo: '${assets.logo}'
       }
     };
+
+    let writerSigSize = 48;
+    let headmasterSigSize = 52;
 
     function switchSchool(key) {
       const school = SCHOOL_DATA[key];
@@ -996,6 +1058,7 @@ const htmlContent = `<!DOCTYPE html>
         const stubImg = document.getElementById('stub_writer_sig_img');
         const removeBtn = document.getElementById('btn_remove_writer_sig');
         const preview = document.getElementById('preview_writer_sig');
+        const sizeCtrl = document.getElementById('ctrl_writer_sig_size');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1004,6 +1067,8 @@ const htmlContent = `<!DOCTYPE html>
           if (stubWrap) stubWrap.style.display = 'block';
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+          if (sizeCtrl) sizeCtrl.style.display = 'flex';
+          resizeSig('writer', writerSigSize);
         } else {
           if (mainImg) mainImg.src = '';
           if (mainWrap) mainWrap.style.display = 'none';
@@ -1011,6 +1076,7 @@ const htmlContent = `<!DOCTYPE html>
           if (stubWrap) stubWrap.style.display = 'none';
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          if (sizeCtrl) sizeCtrl.style.display = 'none';
           const input = document.getElementById('upload_writer_sig');
           if (input) input.value = '';
         }
@@ -1021,6 +1087,7 @@ const htmlContent = `<!DOCTYPE html>
         const stubImg = document.getElementById('stub_headmaster_sig_img');
         const removeBtn = document.getElementById('btn_remove_headmaster_sig');
         const preview = document.getElementById('preview_headmaster_sig');
+        const sizeCtrl = document.getElementById('ctrl_headmaster_sig_size');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1029,6 +1096,8 @@ const htmlContent = `<!DOCTYPE html>
           if (stubWrap) stubWrap.style.display = 'block';
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+          if (sizeCtrl) sizeCtrl.style.display = 'flex';
+          resizeSig('headmaster', headmasterSigSize);
         } else {
           if (mainImg) mainImg.src = '';
           if (mainWrap) mainWrap.style.display = 'none';
@@ -1036,6 +1105,7 @@ const htmlContent = `<!DOCTYPE html>
           if (stubWrap) stubWrap.style.display = 'none';
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          if (sizeCtrl) sizeCtrl.style.display = 'none';
           const input = document.getElementById('upload_headmaster_sig');
           if (input) input.value = '';
         }
@@ -1044,6 +1114,40 @@ const htmlContent = `<!DOCTYPE html>
 
     function removeSignature(type) {
       setSignature(type, '');
+    }
+
+    function resizeSig(type, size) {
+      size = parseInt(size, 10);
+      if (isNaN(size)) return;
+      if (type === 'writer') {
+        writerSigSize = size;
+        const img = document.getElementById('main_writer_sig_img');
+        const stubImg = document.getElementById('stub_writer_sig_img');
+        const slider = document.getElementById('scale_writer_sig');
+        const valText = document.getElementById('val_writer_sig');
+        if (img) img.style.maxHeight = size + 'px';
+        if (stubImg) stubImg.style.maxHeight = Math.round(size * 0.6) + 'px';
+        if (slider) slider.value = size;
+        if (valText) valText.innerText = size + 'px';
+      } else if (type === 'headmaster') {
+        headmasterSigSize = size;
+        const img = document.getElementById('main_headmaster_sig_img');
+        const stubImg = document.getElementById('stub_headmaster_sig_img');
+        const slider = document.getElementById('scale_headmaster_sig');
+        const valText = document.getElementById('val_headmaster_sig');
+        if (img) img.style.maxHeight = size + 'px';
+        if (stubImg) stubImg.style.maxHeight = Math.round(size * 0.6) + 'px';
+        if (slider) slider.value = size;
+        if (valText) valText.innerText = size + 'px';
+      }
+    }
+
+    function adjustSigSize(type, delta) {
+      if (type === 'writer') {
+        resizeSig('writer', Math.max(24, Math.min(110, writerSigSize + delta)));
+      } else if (type === 'headmaster') {
+        resizeSig('headmaster', Math.max(24, Math.min(120, headmasterSigSize + delta)));
+      }
     }
 
     function loadSampleData() {
@@ -1111,4 +1215,4 @@ const htmlContent = `<!DOCTYPE html>
 fs.writeFileSync('index.html', htmlContent);
 fs.writeFileSync('প্রত্যয়নপত্র_জেনারেটর.html', htmlContent);
 fs.writeFileSync('প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html', htmlContent);
-console.log('index.html, প্রত্যয়নপত্র_জেনারেটর.html, প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html successfully rebuilt with all fixes!');
+console.log('index.html, প্রত্যয়নপত্র_জেনারেটর.html, প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html successfully rebuilt with signature resizing!');
