@@ -856,20 +856,21 @@ const modernHtmlContent = `<!DOCTYPE html>
       cursor: grabbing;
     }
 
-    /* Verification QR Badge (Clean Live Scannable, No 'VERIFIED' text) */
+    /* Verification QR Code (Clean & Pure - No Box/Border) */
     .cert-qr-box {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: absolute;
       top: 36px;
-      right: 44px;
+      right: 46px;
       z-index: 20;
-      background: rgba(255, 255, 255, 0.96);
-      padding: 6px 6px 4px 6px;
-      border-radius: 8px;
-      border: 1.2px solid rgba(212, 175, 55, 0.7);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      background: transparent;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -882,21 +883,20 @@ const modernHtmlContent = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
-      overflow: hidden;
-      min-width: 60px;
-      min-height: 60px;
     }
-    #live_qrcode_canvas img, #live_qrcode_canvas canvas {
+    #live_qrcode_canvas svg, #live_qrcode_canvas img, #live_qrcode_canvas canvas {
+      width: 62px;
+      height: 62px;
       display: block;
     }
     .cert-serial-no {
       font-family: 'Cinzel', 'EB Garamond', serif;
-      font-size: 0.62rem;
+      font-size: 0.64rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: 0.8px;
       margin-top: 3px;
+      text-align: center;
     }
 
     /* ========================================================
@@ -1345,10 +1345,9 @@ const modernHtmlContent = `<!DOCTYPE html>
       }
     }
 
-    let qrcodeObj = null;
     function updateLiveQR() {
       const qrBox = document.getElementById('live_qrcode_canvas');
-      if (!qrBox || typeof QRCode === 'undefined') return;
+      if (!qrBox || typeof qrcode !== 'function') return;
       qrBox.innerHTML = '';
 
       const school = (document.getElementById('main_school_name') ? document.getElementById('main_school_name').innerText.trim() : '') || 'প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্';
@@ -1360,14 +1359,14 @@ const modernHtmlContent = `<!DOCTYPE html>
 
       const verifyData = '[' + school + ' - প্রত্যয়নপত্র যাচাই]\\nনাম: ' + name + '\\nরোল: ' + roll + ' | শ্রেণি: ' + cls + ' | শিক্ষাবর্ষ: ' + year + '\\nসনদ ট্র্যাকিং নং: ' + serial + '\\nস্ট্যাটাস: আসল ও পরীক্ষিত (VERIFIED)';
 
-      qrcodeObj = new QRCode(qrBox, {
-        text: verifyData,
-        width: 60,
-        height: 60,
-        colorDark: "#0a192f",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(unescape(encodeURIComponent(verifyData)));
+        qr.make();
+        qrBox.innerHTML = qr.createSvgTag(1.6, 0);
+      } catch (e) {
+        console.error('QR creation error:', e);
+      }
     }
 
     function switchSchool(key) {
