@@ -6,13 +6,10 @@ An authentic, print-ready School Certificate and Testimonial generation system s
 
 ## 🌟 Features (মূল সুবিধাসমূহ)
 
-- 👑 **Modern Luxury Royal Edition (নতুন রাজকীয় আধুনিক সংস্করণ)**:
-  - **Modern Certificate Generator**: `modern_certificate.html` / `আধুনিক_প্রত্যয়নপত্র.html`
-  - 4 Royal Color Themes (Royal Navy & Gold, Imperial Burgundy, Emerald Prestige, Vintage Parchment)
-  - 3D Gold Foil Embossed Seal with ribbons
-  - Dynamic QR verification badge & serial tracking
-  - Live signature drag-and-drop, interactive sliders, nudge controls & stub toggle
-  - Ultra-high-res 4K PNG export & single-sheet A4 landscape print
+- 📱 **Digital Verification QR Code (লাইভ সত্যতা যাচাই কিউআর কোড)**:
+  - Google Lens বা স্মার্টফোন ক্যামেরা দিয়ে স্ক্যান করলেই সরাসরি অন-স্ক্রিন সনদ যাচাই।
+  - টগল সুইচের মাধ্যমে অন/অফ করার সুবিধা।
+  - মাউস দিয়ে ড্র্যাগ করে ইচ্ছামতো পজিশন পরিবর্তন ও রিসেট।
 - 📜 **Dual Language Support (দ্বিভাষিক)**:
   - **Bengali Version (বাংলা প্রত্যয়নপত্র)**: `index.html` / `প্রত্যয়নপত্র_জেনারেটর.html`
   - **English Version (English Certificate)**: `Certificate_Generator_EN.html` / `certificate_en.html`
@@ -27,7 +24,7 @@ An authentic, print-ready School Certificate and Testimonial generation system s
   - Toggle between blank format (খালি ফরম) and filled student data.
 - 📄 **Multiple Output Formats**:
   - Web Apps (HTML)
-  - PDF Generation (`generate_pdf.js`, `generate_english_pdf.js`, `generate_modern_pdf.js`, etc.)
+  - PDF Generation (`generate_pdf.js`, `generate_english_pdf.js`, etc.)
   - Editable Word Documents (`.docx`) (`generate_docx.js`, `generate_precadet_docx.js`)
 
 ---
@@ -36,9 +33,7 @@ An authentic, print-ready School Certificate and Testimonial generation system s
 
 | ফাইল / ডিরেক্টরি | বিবরণ |
 |---|---|
-| `modern_certificate.html` / `আধুনিক_প্রত্যয়নপত্র.html` | 👑 নতুন রাজকীয় আধুনিক লাক্সারি প্রত্যয়নপত্র জেনারেটর (Royal Luxury Edition) |
-| `আধুনিক_প্রত্যয়নপত্র_নমুনা.pdf` | নতুন আধুনিক প্রত্যয়নপত্রের প্রিন্ট-রেডি নমুনা PDF |
-| `index.html` | মূল বাংলা প্রত্যয়নপত্র জেনারেটর (Main Bengali Generator) |
+| `index.html` / `প্রত্যয়নপত্র_জেনারেটর.html` | মূল বাংলা প্রত্যয়নপত্র জেনারেটর (Main Bengali Generator with QR & Signatures) |
 | `Certificate_Generator_EN.html` | ইংরেজি প্রত্যয়নপত্র জেনারেটর (English Certificate Generator) |
 | `প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html` | প্রি-ক্যাডেট হোমসের বিশেষায়িত প্রত্যয়নপত্র |
 | `*.pdf` | রেডিমেড খালি ও পূরণকৃত প্রিন্ট কপি (Sample & Blank PDFs) |
