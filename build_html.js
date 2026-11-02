@@ -209,7 +209,12 @@ const htmlContent = `<!DOCTYPE html>
     /* SIGNATURE STYLES */
     .sig-zone {
       position: relative;
-      cursor: pointer;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+    .sig-zone:active {
+      cursor: grabbing;
     }
     .sig-img {
       max-height: 48px;
@@ -258,19 +263,27 @@ const htmlContent = `<!DOCTYPE html>
 
     .sig-size-ctrls {
       position: absolute;
-      top: -26px;
+      top: -28px;
       left: 50%;
       transform: translateX(-50%);
       display: none;
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 4px;
-      padding: 2px 5px;
-      gap: 4px;
-      z-index: 25;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 5px;
+      padding: 3px 6px;
+      gap: 3px;
+      z-index: 30;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      white-space: nowrap;
+      align-items: center;
     }
     .sig-zone:hover .sig-size-ctrls {
       display: flex;
+    }
+    .sig-ctrl-divider {
+      width: 1px;
+      height: 14px;
+      background: #475569;
+      margin: 0 2px;
     }
     .btn-sig-adj {
       background: #2563eb;
@@ -749,6 +762,28 @@ const htmlContent = `<!DOCTYPE html>
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4)">+</button>
         <span id="val_writer_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">48px</span>
       </div>
+      <!-- Position Controls -->
+      <div id="ctrl_writer_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">পজিশন অ্যাডজাস্ট (Position):</span>
+          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('writer')">↺ রিসেট</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">ডানে-বামে:</span>
+          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', -4, 0)">◄</button>
+          <input type="range" id="pos_x_writer" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'x', this.value)">
+          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 4, 0)">►</button>
+          <span id="val_pos_x_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">উপরে-নিচে:</span>
+          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, -3)">▲</button>
+          <input type="range" id="pos_y_writer" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'y', this.value)">
+          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, 3)">▼</button>
+          <span id="val_pos_y_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
+        </div>
+        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 সার্টিফিকেটের ওপর মাউস দিয়ে টেনেও (Drag) সরানো যাবে</span>
+      </div>
     </div>
     <div class="form-group">
       <label>প্রধান শিক্ষকের স্বাক্ষর (সিগনেচার):</label>
@@ -764,6 +799,28 @@ const htmlContent = `<!DOCTYPE html>
         <input type="range" id="scale_headmaster_sig" min="24" max="120" value="52" style="flex: 1; accent-color: #2563eb;" oninput="resizeSig('headmaster', this.value)">
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4)">+</button>
         <span id="val_headmaster_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">52px</span>
+      </div>
+      <!-- Position Controls -->
+      <div id="ctrl_headmaster_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">পজিশন অ্যাডজাস্ট (Position):</span>
+          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('headmaster')">↺ রিসেট</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">ডানে-বামে:</span>
+          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', -4, 0)">◄</button>
+          <input type="range" id="pos_x_headmaster" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'x', this.value)">
+          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 4, 0)">►</button>
+          <span id="val_pos_x_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">উপরে-নিচে:</span>
+          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, -3)">▲</button>
+          <input type="range" id="pos_y_headmaster" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'y', this.value)">
+          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, 3)">▼</button>
+          <span id="val_pos_y_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
+        </div>
+        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 সার্টিফিকেটের ওপর মাউস দিয়ে টেনেও (Drag) সরানো যাবে</span>
       </div>
     </div>
 
@@ -917,10 +974,18 @@ const htmlContent = `<!DOCTYPE html>
               <div class="footer-left-row" style="position: relative;">
                 <span>লেখক:</span>
                 <div style="position: relative; display: inline-flex; align-items: baseline;">
-                  <div id="main_writer_sig_wrap" class="sig-zone" onclick="triggerSigUpload('writer')" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড/পরিবর্তন করুন">
-                    <div class="sig-size-ctrls">
-                      <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('writer', -4);" title="ছোটো করুন">−</button>
-                      <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('writer', 4);" title="বড় করুন">+</button>
+                  <div id="main_writer_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="মাউস দিয়ে টেনে (Drag) যেকোনো জায়গায় বসান">
+                    <div class="sig-size-ctrls" onclick="event.stopPropagation();">
+                      <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', -4);" title="ছোটো করুন">−</button>
+                      <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4);" title="বড় করুন">+</button>
+                      <div class="sig-ctrl-divider"></div>
+                      <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, -3);" title="উপরে তুলুন">▲</button>
+                      <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, 3);" title="নিচে নামান">▼</button>
+                      <button type="button" class="btn-sig-adj" onclick="moveSig('writer', -4, 0);" title="বামে সরান">◄</button>
+                      <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 4, 0);" title="ডানে সরান">►</button>
+                      <button type="button" class="btn-sig-adj" style="background: #475569;" onclick="resetSigPos('writer');" title="পজিশন রিসেট">↺</button>
+                      <div class="sig-ctrl-divider"></div>
+                      <button type="button" class="btn-sig-adj" style="background: #059669;" onclick="triggerSigUpload('writer');" title="স্বাক্ষর পরিবর্তন/আপলোড">✎</button>
                     </div>
                     <img id="main_writer_sig_img" class="sig-img" src="" alt="লেখকের স্বাক্ষর">
                   </div>
@@ -935,10 +1000,18 @@ const htmlContent = `<!DOCTYPE html>
 
             <div class="footer-right">
               <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-                <div id="main_headmaster_sig_wrap" class="sig-zone" onclick="triggerSigUpload('headmaster')" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড/পরিবর্তন করুন">
-                  <div class="sig-size-ctrls">
-                    <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('headmaster', -4);" title="ছোটো করুন">−</button>
-                    <button type="button" class="btn-sig-adj" onclick="event.stopPropagation(); adjustSigSize('headmaster', 4);" title="বড় করুন">+</button>
+                <div id="main_headmaster_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="মাউস দিয়ে টেনে (Drag) যেকোনো জায়গায় বসান">
+                  <div class="sig-size-ctrls" onclick="event.stopPropagation();">
+                    <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', -4);" title="ছোটো করুন">−</button>
+                    <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4);" title="বড় করুন">+</button>
+                    <div class="sig-ctrl-divider"></div>
+                    <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, -3);" title="উপরে তুলুন">▲</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, 3);" title="নিচে নামান">▼</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', -4, 0);" title="বামে সরান">◄</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 4, 0);" title="ডানে সরান">►</button>
+                    <button type="button" class="btn-sig-adj" style="background: #475569;" onclick="resetSigPos('headmaster');" title="পজিশন রিসেট">↺</button>
+                    <div class="sig-ctrl-divider"></div>
+                    <button type="button" class="btn-sig-adj" style="background: #059669;" onclick="triggerSigUpload('headmaster');" title="স্বাক্ষর পরিবর্তন/আপলোড">✎</button>
                   </div>
                   <img id="main_headmaster_sig_img" class="sig-img" src="" alt="প্রধান শিক্ষকের স্বাক্ষর">
                 </div>
@@ -971,6 +1044,100 @@ const htmlContent = `<!DOCTYPE html>
 
     let writerSigSize = 48;
     let headmasterSigSize = 52;
+    let sigPositions = {
+      writer: { x: 0, y: 0 },
+      headmaster: { x: 0, y: 0 }
+    };
+
+    function applySigPos(type) {
+      const pos = sigPositions[type];
+      const mainWrap = document.getElementById('main_' + type + '_sig_wrap');
+      const stubWrap = document.getElementById('stub_' + type + '_sig_wrap');
+      if (mainWrap) {
+        mainWrap.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px)';
+      }
+      if (stubWrap) {
+        stubWrap.style.transform = 'translate(' + Math.round(pos.x * 0.6) + 'px, ' + Math.round(pos.y * 0.6) + 'px)';
+      }
+      const sliderX = document.getElementById('pos_x_' + type);
+      const sliderY = document.getElementById('pos_y_' + type);
+      const valX = document.getElementById('val_pos_x_' + type);
+      const valY = document.getElementById('val_pos_y_' + type);
+      if (sliderX) sliderX.value = pos.x;
+      if (sliderY) sliderY.value = pos.y;
+      if (valX) valX.innerText = (pos.x > 0 ? '+' : '') + pos.x + 'px';
+      if (valY) valY.innerText = (pos.y > 0 ? '+' : '') + pos.y + 'px';
+    }
+
+    function moveSig(type, dx, dy) {
+      sigPositions[type].x = Math.max(-120, Math.min(120, sigPositions[type].x + dx));
+      sigPositions[type].y = Math.max(-80, Math.min(60, sigPositions[type].y + dy));
+      applySigPos(type);
+    }
+
+    function setSigPos(type, axis, val) {
+      val = parseInt(val, 10);
+      if (isNaN(val)) return;
+      sigPositions[type][axis] = val;
+      applySigPos(type);
+    }
+
+    function resetSigPos(type) {
+      sigPositions[type].x = 0;
+      sigPositions[type].y = 0;
+      applySigPos(type);
+    }
+
+    function initSigDraggable(type) {
+      const el = document.getElementById('main_' + type + '_sig_wrap');
+      if (!el) return;
+      let isDragging = false;
+      let startX, startY;
+      let initialPosX, initialPosY;
+
+      function onPointerDown(e) {
+        if (e.target.closest('.sig-size-ctrls')) return;
+        isDragging = true;
+        const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        startX = clientX;
+        startY = clientY;
+        initialPosX = sigPositions[type].x;
+        initialPosY = sigPositions[type].y;
+        el.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', onPointerMove);
+        document.addEventListener('mouseup', onPointerUp);
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp);
+        e.preventDefault();
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging) return;
+        const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        sigPositions[type].x = Math.max(-120, Math.min(120, initialPosX + dx));
+        sigPositions[type].y = Math.max(-80, Math.min(60, initialPosY + dy));
+        applySigPos(type);
+        if (e.cancelable) e.preventDefault();
+      }
+
+      function onPointerUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        el.style.cursor = 'grab';
+        document.removeEventListener('mousemove', onPointerMove);
+        document.removeEventListener('mouseup', onPointerUp);
+        document.removeEventListener('touchmove', onPointerMove);
+        document.removeEventListener('touchend', onPointerUp);
+      }
+
+      el.addEventListener('mousedown', onPointerDown);
+      el.addEventListener('touchstart', onPointerDown, { passive: false });
+      el.style.cursor = 'grab';
+    }
 
     function switchSchool(key) {
       const school = SCHOOL_DATA[key];
@@ -1059,6 +1226,7 @@ const htmlContent = `<!DOCTYPE html>
         const removeBtn = document.getElementById('btn_remove_writer_sig');
         const preview = document.getElementById('preview_writer_sig');
         const sizeCtrl = document.getElementById('ctrl_writer_sig_size');
+        const posCtrl = document.getElementById('ctrl_writer_sig_pos');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1068,7 +1236,9 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
+          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('writer', writerSigSize);
+          applySigPos('writer');
         } else {
           if (mainImg) mainImg.src = '';
           if (mainWrap) mainWrap.style.display = 'none';
@@ -1077,8 +1247,10 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
           if (sizeCtrl) sizeCtrl.style.display = 'none';
+          if (posCtrl) posCtrl.style.display = 'none';
           const input = document.getElementById('upload_writer_sig');
           if (input) input.value = '';
+          resetSigPos('writer');
         }
       } else if (type === 'headmaster') {
         const mainWrap = document.getElementById('main_headmaster_sig_wrap');
@@ -1088,6 +1260,7 @@ const htmlContent = `<!DOCTYPE html>
         const removeBtn = document.getElementById('btn_remove_headmaster_sig');
         const preview = document.getElementById('preview_headmaster_sig');
         const sizeCtrl = document.getElementById('ctrl_headmaster_sig_size');
+        const posCtrl = document.getElementById('ctrl_headmaster_sig_pos');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1097,7 +1270,9 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
+          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('headmaster', headmasterSigSize);
+          applySigPos('headmaster');
         } else {
           if (mainImg) mainImg.src = '';
           if (mainWrap) mainWrap.style.display = 'none';
@@ -1106,8 +1281,10 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
           if (sizeCtrl) sizeCtrl.style.display = 'none';
+          if (posCtrl) posCtrl.style.display = 'none';
           const input = document.getElementById('upload_headmaster_sig');
           if (input) input.value = '';
+          resetSigPos('headmaster');
         }
       }
     }
@@ -1208,6 +1385,8 @@ const htmlContent = `<!DOCTYPE html>
 
     // Initialize
     syncData();
+    initSigDraggable('writer');
+    initSigDraggable('headmaster');
   </script>
 </body>
 </html>`;
