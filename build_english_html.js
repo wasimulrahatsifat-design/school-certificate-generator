@@ -458,11 +458,20 @@ const htmlContent = `<!DOCTYPE html>
       flex-direction: column;
       gap: 8px;
     }
+    .stub-headmaster-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 105px;
+    }
+    .stub-sign-line {
+      width: 95px;
+      border-top: 1px dashed #64748b;
+      margin-bottom: 4px;
+    }
     .stub-signature-title {
       font-weight: 800;
       color: #1e293b;
-      border-top: 1px dashed #64748b;
-      padding-top: 4px;
       text-align: center;
       font-family: 'Inter', sans-serif;
     }
@@ -902,7 +911,17 @@ const htmlContent = `<!DOCTYPE html>
             <div style="display:flex; align-items:baseline; gap:4px; position: relative;">
               <span>Prepared:</span>
               <div style="position: relative; flex-grow: 1; display: inline-flex; align-items: baseline;">
-                <div id="stub_writer_sig_wrap" style="display: none; position: absolute; bottom: 2px; left: 5px; z-index: 5;">
+                <div id="stub_writer_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 2px; left: 5px; z-index: 5;" title="Click and drag to position anywhere">
+                  <div class="sig-size-ctrls" onclick="event.stopPropagation();">
+                    <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', -4);" title="Make smaller">−</button>
+                    <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4);" title="Make larger">+</button>
+                    <div class="sig-ctrl-divider"></div>
+                    <button type="button" class="btn-sig-adj" onclick="moveStubSig('writer', 0, -3);" title="Move up">▲</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveStubSig('writer', 0, 3);" title="Move down">▼</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveStubSig('writer', -4, 0);" title="Move left">◄</button>
+                    <button type="button" class="btn-sig-adj" onclick="moveStubSig('writer', 4, 0);" title="Move right">►</button>
+                    <button type="button" class="btn-sig-adj" style="background: #475569;" onclick="resetStubSigPos('writer');" title="Reset position">↺</button>
+                  </div>
                   <img id="stub_writer_sig_img" class="stub-sig-img" src="" alt="Signature">
                 </div>
                 <span class="stub-field" style="width: 100px;" id="stub_view_writer"></span>
@@ -913,11 +932,24 @@ const htmlContent = `<!DOCTYPE html>
               <span class="stub-field" style="width: 100px;" id="stub_view_date"></span>
             </div>
           </div>
-          <div class="stub-signature-title" style="position: relative;">
-            <div id="stub_headmaster_sig_wrap" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); z-index: 5; margin-bottom: 2px;">
-              <img id="stub_headmaster_sig_img" class="stub-sig-img" src="" alt="Signature">
+          <div class="stub-headmaster-col">
+            <div style="position: relative; width: 100%; display: flex; flex-direction: column; align-items: center;">
+              <div id="stub_headmaster_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="Click and drag to position anywhere">
+                <div class="sig-size-ctrls" onclick="event.stopPropagation();">
+                  <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', -4);" title="Make smaller">−</button>
+                  <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4);" title="Make larger">+</button>
+                  <div class="sig-ctrl-divider"></div>
+                  <button type="button" class="btn-sig-adj" onclick="moveStubSig('headmaster', 0, -3);" title="Move up">▲</button>
+                  <button type="button" class="btn-sig-adj" onclick="moveStubSig('headmaster', 0, 3);" title="Move down">▼</button>
+                  <button type="button" class="btn-sig-adj" onclick="moveStubSig('headmaster', -4, 0);" title="Move left">◄</button>
+                  <button type="button" class="btn-sig-adj" onclick="moveStubSig('headmaster', 4, 0);" title="Move right">►</button>
+                  <button type="button" class="btn-sig-adj" style="background: #475569;" onclick="resetStubSigPos('headmaster');" title="Reset position">↺</button>
+                </div>
+                <img id="stub_headmaster_sig_img" class="stub-sig-img" src="" alt="Headmaster Signature">
+              </div>
+              <div class="stub-sign-line"></div>
             </div>
-            Headmaster
+            <div class="stub-signature-title">Headmaster</div>
           </div>
         </div>
       </aside>
@@ -1065,17 +1097,19 @@ const htmlContent = `<!DOCTYPE html>
       writer: { x: 0, y: 0 },
       headmaster: { x: 0, y: 0 }
     };
+    let stubSigPositions = {
+      writer: { x: 0, y: 0 },
+      headmaster: { x: 0, y: 0 }
+    };
 
     function applySigPos(type) {
       const pos = sigPositions[type];
       const mainWrap = document.getElementById('main_' + type + '_sig_wrap');
-      const stubWrap = document.getElementById('stub_' + type + '_sig_wrap');
       if (mainWrap) {
         mainWrap.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px)';
       }
-      if (stubWrap) {
-        stubWrap.style.transform = 'translate(' + Math.round(pos.x * 0.6) + 'px, ' + Math.round(pos.y * 0.6) + 'px)';
-      }
+      applyStubSigPos(type);
+
       const sliderX = document.getElementById('pos_x_' + type);
       const sliderY = document.getElementById('pos_y_' + type);
       const valX = document.getElementById('val_pos_x_' + type);
@@ -1086,10 +1120,31 @@ const htmlContent = `<!DOCTYPE html>
       if (valY) valY.innerText = (pos.y > 0 ? '+' : '') + pos.y + 'px';
     }
 
+    function applyStubSigPos(type) {
+      const stubWrap = document.getElementById('stub_' + type + '_sig_wrap');
+      if (stubWrap) {
+        const totalX = Math.round(sigPositions[type].x * 0.6) + stubSigPositions[type].x;
+        const totalY = Math.round(sigPositions[type].y * 0.6) + stubSigPositions[type].y;
+        stubWrap.style.transform = 'translate(' + totalX + 'px, ' + totalY + 'px)';
+      }
+    }
+
     function moveSig(type, dx, dy) {
       sigPositions[type].x = Math.max(-120, Math.min(120, sigPositions[type].x + dx));
       sigPositions[type].y = Math.max(-80, Math.min(60, sigPositions[type].y + dy));
       applySigPos(type);
+    }
+
+    function moveStubSig(type, dx, dy) {
+      stubSigPositions[type].x = Math.max(-60, Math.min(60, stubSigPositions[type].x + dx));
+      stubSigPositions[type].y = Math.max(-40, Math.min(40, stubSigPositions[type].y + dy));
+      applyStubSigPos(type);
+    }
+
+    function resetStubSigPos(type) {
+      stubSigPositions[type].x = 0;
+      stubSigPositions[type].y = 0;
+      applyStubSigPos(type);
     }
 
     function setSigPos(type, axis, val) {
@@ -1102,11 +1157,13 @@ const htmlContent = `<!DOCTYPE html>
     function resetSigPos(type) {
       sigPositions[type].x = 0;
       sigPositions[type].y = 0;
+      stubSigPositions[type].x = 0;
+      stubSigPositions[type].y = 0;
       applySigPos(type);
     }
 
-    function initSigDraggable(type) {
-      const el = document.getElementById('main_' + type + '_sig_wrap');
+    function makeElementDraggable(elId, getPos, setPos, onUpdate) {
+      const el = document.getElementById(elId);
       if (!el) return;
       let isDragging = false;
       let startX, startY;
@@ -1119,8 +1176,9 @@ const htmlContent = `<!DOCTYPE html>
         const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
         startX = clientX;
         startY = clientY;
-        initialPosX = sigPositions[type].x;
-        initialPosY = sigPositions[type].y;
+        const currentPos = getPos();
+        initialPosX = currentPos.x;
+        initialPosY = currentPos.y;
         el.style.cursor = 'grabbing';
         document.addEventListener('mousemove', onPointerMove);
         document.addEventListener('mouseup', onPointerUp);
@@ -1135,9 +1193,8 @@ const htmlContent = `<!DOCTYPE html>
         const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
         const dx = clientX - startX;
         const dy = clientY - startY;
-        sigPositions[type].x = Math.max(-120, Math.min(120, initialPosX + dx));
-        sigPositions[type].y = Math.max(-80, Math.min(60, initialPosY + dy));
-        applySigPos(type);
+        setPos(initialPosX + dx, initialPosY + dy);
+        onUpdate();
         if (e.cancelable) e.preventDefault();
       }
 
@@ -1380,8 +1437,25 @@ const htmlContent = `<!DOCTYPE html>
       });
     }
     // Initialize
-    initSigDraggable('writer');
-    initSigDraggable('headmaster');
+    makeElementDraggable('main_writer_sig_wrap', () => sigPositions.writer, (x, y) => {
+      sigPositions.writer.x = Math.max(-120, Math.min(120, x));
+      sigPositions.writer.y = Math.max(-80, Math.min(60, y));
+    }, () => applySigPos('writer'));
+
+    makeElementDraggable('main_headmaster_sig_wrap', () => sigPositions.headmaster, (x, y) => {
+      sigPositions.headmaster.x = Math.max(-120, Math.min(120, x));
+      sigPositions.headmaster.y = Math.max(-80, Math.min(60, y));
+    }, () => applySigPos('headmaster'));
+
+    makeElementDraggable('stub_writer_sig_wrap', () => stubSigPositions.writer, (x, y) => {
+      stubSigPositions.writer.x = Math.max(-60, Math.min(60, x));
+      stubSigPositions.writer.y = Math.max(-40, Math.min(40, y));
+    }, () => applyStubSigPos('writer'));
+
+    makeElementDraggable('stub_headmaster_sig_wrap', () => stubSigPositions.headmaster, (x, y) => {
+      stubSigPositions.headmaster.x = Math.max(-60, Math.min(60, x));
+      stubSigPositions.headmaster.y = Math.max(-40, Math.min(40, y));
+    }, () => applyStubSigPos('headmaster'));
   </script>
 </body>
 </html>`;
