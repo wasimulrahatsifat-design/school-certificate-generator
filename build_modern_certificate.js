@@ -885,8 +885,8 @@ const modernHtmlContent = `<!DOCTYPE html>
       justify-content: center;
     }
     #live_qrcode_canvas svg, #live_qrcode_canvas img, #live_qrcode_canvas canvas {
-      width: 82px;
-      height: 82px;
+      width: 96px;
+      height: 96px;
       display: block;
     }
 
@@ -1340,18 +1340,26 @@ const modernHtmlContent = `<!DOCTYPE html>
       if (!qrBox || typeof qrcode !== 'function') return;
       qrBox.innerHTML = '';
 
+      const school = (document.getElementById('main_school_name') ? document.getElementById('main_school_name').innerText.trim() : '') || 'প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্';
+      const name = document.getElementById('in_name') ? document.getElementById('in_name').value.trim() : 'মো: আবদুর রহমান';
+      const roll = document.getElementById('in_roll') ? document.getElementById('in_roll').value.trim() : '১৬';
+      const cls = document.getElementById('in_class') ? document.getElementById('in_class').value.trim() : 'প্লে';
+      const year = document.getElementById('in_year') ? document.getElementById('in_year').value.trim() : '২০২৬';
       const serial = (document.getElementById('in_serial') ? document.getElementById('in_serial').value.trim() : '') || 'CERT-2026-PC-0142';
 
-      // Standard verification link: Google Lens instantly pops up this URL preview
-      const verifyUrl = 'https://wasimulrahatsifat-design.github.io/school-certificate-generator/modern_certificate.html?v=' + encodeURIComponent(serial);
+      // Direct text verification card: Google Lens / cameras display this directly on screen without opening any website
+      const verifyData = '=== প্রত্যয়নপত্র সত্যতা যাচাই ===\\n' +
+        'প্রতিষ্ঠান: ' + school + '\\n' +
+        'শিক্ষার্থী: ' + name + '\\n' +
+        'শ্রেণি: ' + cls + ' | রোল: ' + roll + ' | শিক্ষাবর্ষ: ' + year + '\\n' +
+        'সনদ ট্র্যাকিং নং: ' + serial + '\\n' +
+        'স্ট্যাটাস: আসল ও অনুমোদিত সনদ (VERIFIED)';
 
       try {
-        // Error Correction 'L' with auto-version keeps the matrix simple and clean (only 41x41 dots)
         const qr = qrcode(0, 'L');
-        qr.addData(verifyUrl);
+        qr.addData(unescape(encodeURIComponent(verifyData)));
         qr.make();
-        // Margin = 2 creates the essential white quiet-zone border required by Google Lens & phone cameras
-        qrBox.innerHTML = qr.createSvgTag(2.5, 2);
+        qrBox.innerHTML = qr.createSvgTag(2, 2);
       } catch (e) {
         console.error('QR creation error:', e);
       }
