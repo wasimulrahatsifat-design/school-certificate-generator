@@ -78,7 +78,7 @@ const modernSvgBorder = `
 
 // Modern 3D Golden Embossed Seal SVG
 const goldSealSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="125" height="125" class="seal-svg-img">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="96" height="96" class="seal-svg-img">
   <defs>
     <radialGradient id="sealBody" cx="38%" cy="36%" r="65%">
       <stop offset="0%" stop-color="#fff5cc"/>
@@ -622,16 +622,11 @@ const modernHtmlContent = `<!DOCTYPE html>
       margin-top: 1px;
     }
     .cert-reg-badge {
-      display: inline-block;
-      font-size: 0.74rem;
-      font-weight: 800;
-      color: #854d0e;
-      background: #fef08a;
-      border: 1px solid #eab308;
-      border-radius: 14px;
-      padding: 1px 12px;
-      margin-top: 2px;
-      letter-spacing: -0.15px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--theme-secondary);
+      margin-top: 3px;
+      letter-spacing: -0.1px;
     }
 
     /* Majestic Royal Plaque Banner */
@@ -816,44 +811,73 @@ const modernHtmlContent = `<!DOCTYPE html>
       margin: 0 2px;
     }
 
-    /* Golden 3D Seal Positioning */
+    /* Center Footer Seal Column */
+    .footer-seal-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      width: 140px;
+      min-height: 98px;
+    }
     .seal-container {
-      position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       z-index: 15;
       cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: transform 0.05s ease;
     }
     .seal-container:active {
       cursor: grabbing;
     }
 
-    /* Verification QR Badge */
+    /* Verification QR Badge (Elegantly docked in Top-Right) */
     .cert-qr-box {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: absolute;
-      bottom: 26px;
-      left: 228px;
-      z-index: 12;
-      background: rgba(255,255,255,0.85);
-      padding: 4px 6px;
-      border-radius: 6px;
-      border: 1px solid #d4af37;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      top: 36px;
+      right: 42px;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 5px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.7);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(4px);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: transform 0.05s ease;
+    }
+    .cert-qr-box:active {
+      cursor: grabbing;
+    }
+    .cert-qr-header {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #8c6409;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
     }
     .cert-serial-no {
       font-family: 'Cinzel', serif;
       font-size: 0.65rem;
       font-weight: 800;
-      color: #8c6409;
+      color: #0f172a;
       letter-spacing: 0.8px;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     /* ========================================================
@@ -922,6 +946,10 @@ const modernHtmlContent = `<!DOCTYPE html>
 
       <!-- Toggle Stub -->
       <button type="button" class="btn-action btn-navy" id="btnToggleStub" onclick="toggleStub()">✂️ অফিস কপি অন/অফ</button>
+
+      <!-- Toggle Seal & QR -->
+      <button type="button" class="btn-action btn-navy" id="btnToggleSeal" onclick="toggleSeal(document.getElementById('sealWrapper').style.display === 'none')">🎖️ সিল অন</button>
+      <button type="button" class="btn-action btn-navy" id="btnToggleQR" onclick="toggleQR(document.getElementById('qrContainer').style.display === 'none')">📱 কিউআর অন</button>
 
       <!-- Print & Export -->
       <button type="button" class="btn-action btn-gold" onclick="window.print()">🖨️ প্রিন্ট করুন</button>
@@ -1191,9 +1219,12 @@ const modernHtmlContent = `<!DOCTYPE html>
           </div>
         </article>
 
-        <!-- Dynamic Verification QR Badge -->
-        <div class="cert-qr-box" id="qrContainer">
-          <svg width="44" height="44" viewBox="0 0 100 100" fill="#0f172a">
+        <!-- Dynamic Verification QR Badge (Top-Right Header Corner) -->
+        <div class="cert-qr-box" id="qrContainer" title="মাউস দিয়ে ড্র্যাগ করে ইচ্ছামতো সরানো যায়">
+          <div class="cert-qr-header">
+            <span>🔒</span> VERIFIED
+          </div>
+          <svg width="40" height="40" viewBox="0 0 100 100" fill="#0f172a">
             <!-- Stylized Crisp QR matrix -->
             <rect x="0" y="0" width="30" height="30" fill="#0a192f"/>
             <rect x="5" y="5" width="20" height="20" fill="#fff"/>
@@ -1224,14 +1255,9 @@ const modernHtmlContent = `<!DOCTYPE html>
           <div class="cert-serial-no" id="view_serial">CERT-2026-PC-0142</div>
         </div>
 
-        <!-- 3D Embossed Golden Seal in Center Bottom -->
-        <div class="seal-container" id="goldSealElement">
-          ${goldSealSvg}
-        </div>
-
-        <!-- Certificate Footer -->
+        <!-- Certificate Footer (Balanced 3-Column Layout) -->
         <div class="cert-footer-row">
-          <!-- Left: Prepared By -->
+          <!-- Column 1: Left - Prepared By & Date -->
           <div class="footer-signer-col" style="align-items: flex-start; margin-left: 10px;">
             <div style="display: flex; align-items: baseline; gap: 6px; position: relative;">
               <span style="font-weight: 700;">প্রস্তুতকারী:</span>
@@ -1252,15 +1278,22 @@ const modernHtmlContent = `<!DOCTYPE html>
                 <span class="fill-line" style="min-width: 130px;" id="main_val_writer" contenteditable="true"></span>
               </div>
             </div>
-            <div style="display: flex; align-items: baseline; gap: 6px; margin-top: 4px;">
+            <div style="display: flex; align-items: baseline; gap: 6px; margin-top: 5px;">
               <span style="font-weight: 700;">তারিখ:</span>
               <span class="fill-line" style="min-width: 145px;" id="main_val_date" contenteditable="true"></span>
             </div>
           </div>
 
-          <!-- Right: Headmaster -->
-          <div class="footer-signer-col">
-            <div style="position: relative; display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <!-- Column 2: Center - 3D Embossed Golden Seal (Symmetrically Centered) -->
+          <div class="footer-seal-col" id="sealWrapper">
+            <div class="seal-container" id="goldSealElement" title="ড্র্যাগ করে ইচ্ছামতো সরানো যায়">
+              ${goldSealSvg}
+            </div>
+          </div>
+
+          <!-- Column 3: Right - Headmaster Signature & Seal -->
+          <div class="footer-signer-col" style="align-items: flex-end; margin-right: 10px;">
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center; width: 170px;">
               <div id="main_headmaster_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 3px; z-index: 25;" title="মাউস দিয়ে ড্র্যাগ করে বসান">
                 <div class="sig-hover-toolbar" onclick="event.stopPropagation();">
                   <button type="button" class="btn-nudge" onclick="adjustSize('headmaster', -4)">−</button>
@@ -1276,8 +1309,8 @@ const modernHtmlContent = `<!DOCTYPE html>
               </div>
               <div class="signing-stroke-line"></div>
             </div>
-            <div class="signer-designation" contenteditable="true">প্রধান শিক্ষক</div>
-            <div class="signer-sub">অধ্যক্ষ / প্রতিষ্ঠান প্রধান</div>
+            <div class="signer-designation" style="width: 170px; text-align: center;" contenteditable="true">প্রধান শিক্ষক</div>
+            <div class="signer-sub" style="width: 170px; text-align: center;">অধ্যক্ষ / প্রতিষ্ঠান প্রধান</div>
           </div>
         </div>
 
@@ -1354,13 +1387,21 @@ const modernHtmlContent = `<!DOCTYPE html>
     }
 
     function toggleSeal(show) {
-      const el = document.getElementById('goldSealElement');
-      el.style.display = show ? 'flex' : 'none';
+      const el = document.getElementById('sealWrapper') || document.getElementById('goldSealElement');
+      if (el) el.style.display = show ? 'flex' : 'none';
+      const chk = document.getElementById('chkSeal');
+      if (chk) chk.checked = show;
+      const btn = document.getElementById('btnToggleSeal');
+      if (btn) btn.innerText = show ? '🎖️ সিল অন' : '🎖️ সিল অফ';
     }
 
     function toggleQR(show) {
       const el = document.getElementById('qrContainer');
-      el.style.display = show ? 'flex' : 'none';
+      if (el) el.style.display = show ? 'flex' : 'none';
+      const chk = document.getElementById('chkQR');
+      if (chk) chk.checked = show;
+      const btn = document.getElementById('btnToggleQR');
+      if (btn) btn.innerText = show ? '📱 কিউআর অন' : '📱 কিউআর অফ';
     }
 
     function syncAll() {
@@ -1503,6 +1544,12 @@ const modernHtmlContent = `<!DOCTYPE html>
     function resetAllPositions() {
       resetSig('writer');
       resetSig('headmaster');
+      sealOffset = { x: 0, y: 0 };
+      qrOffset = { x: 0, y: 0 };
+      const sEl = document.getElementById('goldSealElement');
+      if (sEl) sEl.style.transform = 'none';
+      const qEl = document.getElementById('qrContainer');
+      if (qEl) qEl.style.transform = 'none';
     }
 
     // Generic Draggable Handler
@@ -1601,7 +1648,15 @@ const modernHtmlContent = `<!DOCTYPE html>
     makeDraggable('goldSealElement', (dx, dy) => {
       sealOffset.x += dx;
       sealOffset.y += dy;
-      document.getElementById('goldSealElement').style.transform = 'translate(calc(-50% + ' + sealOffset.x + 'px), ' + sealOffset.y + 'px)';
+      document.getElementById('goldSealElement').style.transform = 'translate(' + sealOffset.x + 'px, ' + sealOffset.y + 'px)';
+    });
+
+    // Make QR code badge draggable as well!
+    let qrOffset = { x: 0, y: 0 };
+    makeDraggable('qrContainer', (dx, dy) => {
+      qrOffset.x += dx;
+      qrOffset.y += dy;
+      document.getElementById('qrContainer').style.transform = 'translate(' + qrOffset.x + 'px, ' + qrOffset.y + 'px)';
     });
   </script>
 </body>
