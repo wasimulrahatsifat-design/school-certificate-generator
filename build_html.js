@@ -1514,6 +1514,11 @@ const htmlContent = `<!DOCTYPE html>
       stubSigPositions.writer.y = Math.max(-40, Math.min(40, y));
     }, () => applyStubSigPos('writer'));
 
+    makeElementDraggable('stub_headmaster_sig_wrap', () => stubSigPositions.headmaster, (x, y) => {
+      stubSigPositions.headmaster.x = Math.max(-60, Math.min(60, x));
+      stubSigPositions.headmaster.y = Math.max(-40, Math.min(40, y));
+    }, () => applyStubSigPos('headmaster'));
+
     // QR Code Live Generation & Controls
     function updateLiveQR() {
       const qrBox = document.getElementById('live_qrcode_canvas');
@@ -1527,11 +1532,11 @@ const htmlContent = `<!DOCTYPE html>
       const serial = (document.getElementById('input_serial') ? document.getElementById('input_serial').value.trim() : '') || 'CERT-2026-PC-0142';
 
       // Concise verification card format: Scans in 0.1s on Google Lens & displays directly on screen
-      const verifyData = 'CERTIFICATE VERIFIED\n' +
-        'Serial: ' + serial + '\n' +
-        'Name: ' + name + '\n' +
-        'Class: ' + cls + ' | Roll: ' + roll + '\n' +
-        'Year: ' + year + '\n' +
+      const verifyData = 'CERTIFICATE VERIFIED\\n' +
+        'Serial: ' + serial + '\\n' +
+        'Name: ' + name + '\\n' +
+        'Class: ' + cls + ' | Roll: ' + roll + '\\n' +
+        'Year: ' + year + '\\n' +
         'Status: ORIGINAL & AUTHENTIC';
 
       try {
