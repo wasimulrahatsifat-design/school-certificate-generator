@@ -786,8 +786,11 @@ const htmlContent = `<!DOCTYPE html>
       <input type="text" id="input_date" value="" placeholder="তারিখ (ঐচ্ছিক)" oninput="syncData()">
     </div>
     <div class="form-group">
-      <label>সনদ ট্র্যাকিং নং:</label>
-      <input type="text" id="input_serial" value="CERT-2026-PC-0142" oninput="syncData()">
+      <label>সনদ ট্র্যাকিং নং (Serial No):</label>
+      <div style="display: flex; gap: 6px;">
+        <input type="text" id="input_serial" value="CERT-2026-PC-0142" style="flex: 1;" oninput="syncData()">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 4px 10px; white-space: nowrap;" onclick="incrementSerial()" title="পরবর্তী সিরিয়াল নম্বর আনুন">+ পরবর্তী নং</button>
+      </div>
     </div>
 
     <!-- SIGNATURE UPLOADS & RESIZING -->
@@ -806,28 +809,6 @@ const htmlContent = `<!DOCTYPE html>
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4)">+</button>
         <span id="val_writer_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">48px</span>
       </div>
-      <!-- Position Controls -->
-      <div id="ctrl_writer_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">পজিশন অ্যাডজাস্ট (Position):</span>
-          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('writer')">↺ রিসেট</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">ডানে-বামে:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', -4, 0)">◄</button>
-          <input type="range" id="pos_x_writer" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'x', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 4, 0)">►</button>
-          <span id="val_pos_x_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">উপরে-নিচে:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, -3)">▲</button>
-          <input type="range" id="pos_y_writer" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'y', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, 3)">▼</button>
-          <span id="val_pos_y_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 সার্টিফিকেটের ওপর মাউস দিয়ে টেনেও (Drag) সরানো যাবে</span>
-      </div>
     </div>
     <div class="form-group">
       <label>প্রধান শিক্ষকের স্বাক্ষর (সিগনেচার):</label>
@@ -843,28 +824,6 @@ const htmlContent = `<!DOCTYPE html>
         <input type="range" id="scale_headmaster_sig" min="24" max="120" value="52" style="flex: 1; accent-color: #2563eb;" oninput="resizeSig('headmaster', this.value)">
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4)">+</button>
         <span id="val_headmaster_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">52px</span>
-      </div>
-      <!-- Position Controls -->
-      <div id="ctrl_headmaster_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">পজিশন অ্যাডজাস্ট (Position):</span>
-          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('headmaster')">↺ রিসেট</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">ডানে-বামে:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', -4, 0)">◄</button>
-          <input type="range" id="pos_x_headmaster" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'x', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 4, 0)">►</button>
-          <span id="val_pos_x_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 45px;">উপরে-নিচে:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, -3)">▲</button>
-          <input type="range" id="pos_y_headmaster" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'y', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, 3)">▼</button>
-          <span id="val_pos_y_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 সার্টিফিকেটের ওপর মাউস দিয়ে টেনেও (Drag) সরানো যাবে</span>
       </div>
     </div>
 
@@ -1255,6 +1214,23 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('stub_logo_img').src = school.logo;
       document.getElementById('cert_logo_img').src = school.logo;
       document.getElementById('watermark_bg').style.backgroundImage = 'url(\"' + school.logo + '\")';
+
+      // Auto-update tracking serial PC / SB
+      const serialInput = document.getElementById('input_serial');
+      if (serialInput) {
+        const cur = serialInput.value;
+        const targetCode = key === 'shawkat' ? 'SB' : 'PC';
+        const otherCode = key === 'shawkat' ? 'PC' : 'SB';
+        if (cur.includes('-' + otherCode + '-')) {
+          serialInput.value = cur.replace('-' + otherCode + '-', '-' + targetCode + '-');
+        } else if (cur.includes(otherCode)) {
+          serialInput.value = cur.replace(otherCode, targetCode);
+        } else if (!cur.includes(targetCode)) {
+          const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
+          serialInput.value = 'CERT-' + year + '-' + targetCode + '-0142';
+        }
+      }
+      syncData();
     }
 
     function toggleFormPanel() {
@@ -1339,7 +1315,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
-          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('writer', writerSigSize);
           applySigPos('writer');
         } else {
@@ -1350,7 +1325,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
           if (sizeCtrl) sizeCtrl.style.display = 'none';
-          if (posCtrl) posCtrl.style.display = 'none';
           const input = document.getElementById('upload_writer_sig');
           if (input) input.value = '';
           resetSigPos('writer');
@@ -1363,7 +1337,6 @@ const htmlContent = `<!DOCTYPE html>
         const removeBtn = document.getElementById('btn_remove_headmaster_sig');
         const preview = document.getElementById('preview_headmaster_sig');
         const sizeCtrl = document.getElementById('ctrl_headmaster_sig_size');
-        const posCtrl = document.getElementById('ctrl_headmaster_sig_pos');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1373,7 +1346,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
-          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('headmaster', headmasterSigSize);
           applySigPos('headmaster');
         } else {
@@ -1460,6 +1432,7 @@ const htmlContent = `<!DOCTYPE html>
 
     function printCertificate() {
       window.print();
+      setTimeout(incrementSerial, 1500);
     }
 
     function downloadAsImage() {
@@ -1480,10 +1453,35 @@ const htmlContent = `<!DOCTYPE html>
         link.download = 'প্রত্যয়নপত্র_' + schoolTitle + '_' + (document.getElementById('input_student_name').value || 'নমুনা') + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+        setTimeout(incrementSerial, 1000);
       }).catch(err => {
         if (cutLine) cutLine.style.display = 'block';
         alert('ছবি ডাউনলোড তৈরিতে সমস্যা হয়েছে: ' + err.message);
       });
+    }
+
+    function incrementSerial() {
+      const serialInput = document.getElementById('input_serial');
+      if (!serialInput) return;
+      const cur = serialInput.value.trim();
+      const match = cur.match(/^(.*?)(\d+)$/);
+      if (match) {
+        const prefix = match[1];
+        const numStr = match[2];
+        const nextNum = parseInt(numStr, 10) + 1;
+        const padded = String(nextNum).padStart(numStr.length, '0');
+        serialInput.value = prefix + padded;
+      } else {
+        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
+        const code = schoolKey === 'shawkat' ? 'SB' : 'PC';
+        const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
+        serialInput.value = 'CERT-' + year + '-' + code + '-0143';
+      }
+      try {
+        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
+        localStorage.setItem('last_serial_' + schoolKey, serialInput.value);
+      } catch (e) {}
+      syncData();
     }
 
     // Initialize

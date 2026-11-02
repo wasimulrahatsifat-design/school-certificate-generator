@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 const assets = JSON.parse(fs.readFileSync('assets_base64.json', 'utf8'));
+const qrcodeLib = fs.readFileSync('qrcode.min.js', 'utf8');
 
 const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -517,6 +518,35 @@ const htmlContent = `<!DOCTYPE html>
       background-size: 100% 100%;
     }
 
+    /* LIVE VERIFICATION QR CODE (Top-Right) */
+    .cert-qr-wrap {
+      position: absolute;
+      top: 32px;
+      right: 44px;
+      z-index: 25;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      transition: transform 0.05s ease;
+    }
+    .cert-qr-wrap:active {
+      cursor: grabbing;
+    }
+    #live_qrcode_canvas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #live_qrcode_canvas svg, #live_qrcode_canvas img, #live_qrcode_canvas canvas {
+      width: 82px;
+      height: 82px;
+      display: block;
+    }
+
     /* CERTIFICATE INNER CONTENT */
     .certificate-content {
       position: relative;
@@ -723,6 +753,7 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="action-buttons">
       <a href="index.html" class="btn btn-lang">🇧🇩 বাংলা ভার্সন</a>
+      <button type="button" id="btnToggleQR" class="btn" style="background:#0d9488; color:#fff;" onclick="toggleQR();">📱 QR: ON</button>
       <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ Edit Form & Signatures</button>
       <button class="btn btn-warning" onclick="loadSampleData()">⭐ Sample Data</button>
       <button class="btn btn-secondary" onclick="clearToBlank()">📄 Blank Form</button>
@@ -769,6 +800,13 @@ const htmlContent = `<!DOCTYPE html>
       <label>Date:</label>
       <input type="text" id="input_date" value="" placeholder="Date (Optional)" oninput="updateField('date', this.value)">
     </div>
+    <div class="form-group">
+      <label>Tracking Serial No:</label>
+      <div style="display: flex; gap: 6px;">
+        <input type="text" id="input_serial" value="CERT-2026-PC-0142" style="flex: 1;" oninput="updateLiveQR()">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 4px 10px; white-space: nowrap;" onclick="incrementSerial()" title="Advance to next serial number">+ Next No</button>
+      </div>
+    </div>
 
     <!-- SIGNATURE UPLOADS & RESIZING -->
     <div class="form-group">
@@ -786,28 +824,6 @@ const htmlContent = `<!DOCTYPE html>
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', 4)">+</button>
         <span id="val_writer_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">48px</span>
       </div>
-      <!-- Position Controls -->
-      <div id="ctrl_writer_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">Position Adjust:</span>
-          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('writer')">↺ Reset</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 62px;">Left-Right:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', -4, 0)">◄</button>
-          <input type="range" id="pos_x_writer" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'x', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 4, 0)">►</button>
-          <span id="val_pos_x_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 62px;">Up-Down:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, -3)">▲</button>
-          <input type="range" id="pos_y_writer" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('writer', 'y', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('writer', 0, 3)">▼</button>
-          <span id="val_pos_y_writer" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 You can also drag the signature directly on the certificate</span>
-      </div>
     </div>
     <div class="form-group">
       <label>Headmaster Signature:</label>
@@ -823,28 +839,6 @@ const htmlContent = `<!DOCTYPE html>
         <input type="range" id="scale_headmaster_sig" min="24" max="120" value="52" style="flex: 1; accent-color: #2563eb;" oninput="resizeSig('headmaster', this.value)">
         <button type="button" class="btn-sig-adj" onclick="adjustSigSize('headmaster', 4)">+</button>
         <span id="val_headmaster_sig" style="font-size: 0.78rem; font-weight: 700; color: #334155; min-width: 32px;">52px</span>
-      </div>
-      <!-- Position Controls -->
-      <div id="ctrl_headmaster_sig_pos" style="display: none; flex-direction: column; gap: 4px; margin-top: 6px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 0.76rem; color: #475569; font-weight: 700;">Position Adjust:</span>
-          <button type="button" style="background: none; border: none; color: #2563eb; font-size: 0.74rem; font-weight: 600; cursor: pointer;" onclick="resetSigPos('headmaster')">↺ Reset</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 62px;">Left-Right:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', -4, 0)">◄</button>
-          <input type="range" id="pos_x_headmaster" min="-120" max="120" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'x', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 4, 0)">►</button>
-          <span id="val_pos_x_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 0.74rem; color: #64748b; width: 62px;">Up-Down:</span>
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, -3)">▲</button>
-          <input type="range" id="pos_y_headmaster" min="-80" max="60" value="0" style="flex: 1; accent-color: #2563eb;" oninput="setSigPos('headmaster', 'y', this.value)">
-          <button type="button" class="btn-sig-adj" onclick="moveSig('headmaster', 0, 3)">▼</button>
-          <span id="val_pos_y_headmaster" style="font-size: 0.72rem; font-weight: 700; color: #334155; min-width: 32px; text-align: right;">0px</span>
-        </div>
-        <span style="font-size: 0.70rem; color: #94a3b8; font-style: italic;">💡 You can also drag the signature directly on the certificate</span>
       </div>
     </div>
 
@@ -958,6 +952,11 @@ const htmlContent = `<!DOCTYPE html>
       <section class="certificate-main">
         <div class="ornate-border-overlay"></div>
         <div class="watermark-bg" id="watermark_bg" style="background-image: url('${assets.precadet_logo_en}');"></div>
+
+        <!-- LIVE SCANNABLE VERIFICATION QR CODE (Top-Right Header Corner) -->
+        <div id="main_qr_container" class="cert-qr-wrap" title="Drag with mouse to reposition">
+          <div id="live_qrcode_canvas"></div>
+        </div>
 
         <div class="certificate-content">
           <!-- Header -->
@@ -1076,6 +1075,9 @@ const htmlContent = `<!DOCTYPE html>
   </main>
 
   <script>
+    // Offline Live QR Code Library
+    ${qrcodeLib}
+
     const SCHOOL_DATA_EN = {
       precadet: {
         name: 'PRE-CADET CHILD CARE HOMES',
@@ -1109,15 +1111,6 @@ const htmlContent = `<!DOCTYPE html>
         mainWrap.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px)';
       }
       applyStubSigPos(type);
-
-      const sliderX = document.getElementById('pos_x_' + type);
-      const sliderY = document.getElementById('pos_y_' + type);
-      const valX = document.getElementById('val_pos_x_' + type);
-      const valY = document.getElementById('val_pos_y_' + type);
-      if (sliderX) sliderX.value = pos.x;
-      if (sliderY) sliderY.value = pos.y;
-      if (valX) valX.innerText = (pos.x > 0 ? '+' : '') + pos.x + 'px';
-      if (valY) valY.innerText = (pos.y > 0 ? '+' : '') + pos.y + 'px';
     }
 
     function applyStubSigPos(type) {
@@ -1229,6 +1222,23 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('stub_logo_img').src = school.logo;
       document.getElementById('cert_logo_img').src = school.logo;
       document.getElementById('watermark_bg').style.backgroundImage = 'url(\"' + school.logo + '\")';
+
+      // Auto-update tracking serial PC / SB
+      const serialInput = document.getElementById('input_serial');
+      if (serialInput) {
+        const cur = serialInput.value;
+        const targetCode = key === 'shawkat' ? 'SB' : 'PC';
+        const otherCode = key === 'shawkat' ? 'PC' : 'SB';
+        if (cur.includes('-' + otherCode + '-')) {
+          serialInput.value = cur.replace('-' + otherCode + '-', '-' + targetCode + '-');
+        } else if (cur.includes(otherCode)) {
+          serialInput.value = cur.replace(otherCode, targetCode);
+        } else if (!cur.includes(targetCode)) {
+          const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
+          serialInput.value = 'CERT-' + year + '-' + targetCode + '-0142';
+        }
+      }
+      updateLiveQR();
     }
 
     function toggleFormPanel() {
@@ -1246,6 +1256,7 @@ const htmlContent = `<!DOCTYPE html>
         const stubEval = document.getElementById('stub_view_eval_class');
         if (stubEval) stubEval.innerText = val;
       }
+      updateLiveQR();
     }
 
     // SIGNATURE UPLOAD & MANAGEMENT
@@ -1276,7 +1287,6 @@ const htmlContent = `<!DOCTYPE html>
         const removeBtn = document.getElementById('btn_remove_writer_sig');
         const preview = document.getElementById('preview_writer_sig');
         const sizeCtrl = document.getElementById('ctrl_writer_sig_size');
-        const posCtrl = document.getElementById('ctrl_writer_sig_pos');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1286,7 +1296,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
-          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('writer', writerSigSize);
           applySigPos('writer');
         } else {
@@ -1297,7 +1306,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
           if (sizeCtrl) sizeCtrl.style.display = 'none';
-          if (posCtrl) posCtrl.style.display = 'none';
           const input = document.getElementById('upload_writer_sig');
           if (input) input.value = '';
           resetSigPos('writer');
@@ -1310,7 +1318,6 @@ const htmlContent = `<!DOCTYPE html>
         const removeBtn = document.getElementById('btn_remove_headmaster_sig');
         const preview = document.getElementById('preview_headmaster_sig');
         const sizeCtrl = document.getElementById('ctrl_headmaster_sig_size');
-        const posCtrl = document.getElementById('ctrl_headmaster_sig_pos');
 
         if (dataUrl) {
           if (mainImg) mainImg.src = dataUrl;
@@ -1320,7 +1327,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'inline-block';
           if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
           if (sizeCtrl) sizeCtrl.style.display = 'flex';
-          if (posCtrl) posCtrl.style.display = 'flex';
           resizeSig('headmaster', headmasterSigSize);
           applySigPos('headmaster');
         } else {
@@ -1331,7 +1337,6 @@ const htmlContent = `<!DOCTYPE html>
           if (removeBtn) removeBtn.style.display = 'none';
           if (preview) { preview.src = ''; preview.style.display = 'none'; }
           if (sizeCtrl) sizeCtrl.style.display = 'none';
-          if (posCtrl) posCtrl.style.display = 'none';
           const input = document.getElementById('upload_headmaster_sig');
           if (input) input.value = '';
           resetSigPos('headmaster');
@@ -1411,6 +1416,7 @@ const htmlContent = `<!DOCTYPE html>
 
     function printCertificate() {
       window.print();
+      setTimeout(incrementSerial, 1500);
     }
 
     function downloadAsImage() {
@@ -1431,12 +1437,38 @@ const htmlContent = `<!DOCTYPE html>
         link.download = 'Certificate_' + schoolTitle + '_' + (document.getElementById('input_name').value || 'Sample') + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+        setTimeout(incrementSerial, 1000);
       }).catch(err => {
         if (cutLine) cutLine.style.display = 'block';
         alert('Image generation failed: ' + err.message);
       });
     }
-    // Initialize
+
+    function incrementSerial() {
+      const serialInput = document.getElementById('input_serial');
+      if (!serialInput) return;
+      const cur = serialInput.value.trim();
+      const match = cur.match(/^(.*?)(\\d+)$/);
+      if (match) {
+        const prefix = match[1];
+        const numStr = match[2];
+        const nextNum = parseInt(numStr, 10) + 1;
+        const padded = String(nextNum).padStart(numStr.length, '0');
+        serialInput.value = prefix + padded;
+      } else {
+        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
+        const code = schoolKey === 'shawkat' ? 'SB' : 'PC';
+        const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
+        serialInput.value = 'CERT-' + year + '-' + code + '-0143';
+      }
+      try {
+        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
+        localStorage.setItem('last_serial_en_' + schoolKey, serialInput.value);
+      } catch (e) {}
+      updateLiveQR();
+    }
+
+    // Initialize Draggables
     makeElementDraggable('main_writer_sig_wrap', () => sigPositions.writer, (x, y) => {
       sigPositions.writer.x = Math.max(-120, Math.min(120, x));
       sigPositions.writer.y = Math.max(-80, Math.min(60, y));
@@ -1456,6 +1488,67 @@ const htmlContent = `<!DOCTYPE html>
       stubSigPositions.headmaster.x = Math.max(-60, Math.min(60, x));
       stubSigPositions.headmaster.y = Math.max(-40, Math.min(40, y));
     }, () => applyStubSigPos('headmaster'));
+
+    // QR Code Live Generation & Controls
+    function updateLiveQR() {
+      const qrBox = document.getElementById('live_qrcode_canvas');
+      if (!qrBox || typeof qrcode !== 'function') return;
+      qrBox.innerHTML = '';
+
+      const name = document.getElementById('input_name') ? document.getElementById('input_name').value.trim() : 'Md. Abdur Rahman';
+      const roll = document.getElementById('input_roll') ? document.getElementById('input_roll').value.trim() : '16';
+      const cls = document.getElementById('input_class') ? document.getElementById('input_class').value.trim() : 'Play';
+      const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
+      const serial = (document.getElementById('input_serial') ? document.getElementById('input_serial').value.trim() : '') || 'CERT-2026-PC-0142';
+
+      // Concise verification card format: Scans in 0.1s on Google Lens & displays directly on screen
+      const verifyData = 'CERTIFICATE VERIFIED\\n' +
+        'Serial: ' + serial + '\\n' +
+        'Name: ' + name + '\\n' +
+        'Class: ' + cls + ' | Roll: ' + roll + '\\n' +
+        'Year: ' + year + '\\n' +
+        'Status: ORIGINAL & AUTHENTIC';
+
+      try {
+        const qr = qrcode(0, 'L');
+        qr.addData(unescape(encodeURIComponent(verifyData)));
+        qr.make();
+        qrBox.innerHTML = qr.createSvgTag(2.5, 2);
+      } catch (e) {
+        console.error('QR creation error:', e);
+      }
+    }
+
+    let isQRVisible = true;
+    function toggleQR(show) {
+      if (show === undefined) isQRVisible = !isQRVisible;
+      else isQRVisible = !!show;
+      const el = document.getElementById('main_qr_container');
+      if (el) el.style.display = isQRVisible ? 'flex' : 'none';
+      const btn = document.getElementById('btnToggleQR');
+      if (btn) {
+        btn.innerText = isQRVisible ? '📱 QR: ON' : '📱 QR: OFF';
+        btn.style.background = isQRVisible ? '#0d9488' : '#64748b';
+      }
+    }
+
+    let qrPosition = { x: 0, y: 0 };
+    function applyQRPos() {
+      const el = document.getElementById('main_qr_container');
+      if (el) el.style.transform = 'translate(' + qrPosition.x + 'px, ' + qrPosition.y + 'px)';
+    }
+    function resetQRPos() {
+      qrPosition = { x: 0, y: 0 };
+      applyQRPos();
+    }
+
+    makeElementDraggable('main_qr_container', () => qrPosition, (x, y) => {
+      qrPosition.x = Math.max(-250, Math.min(60, x));
+      qrPosition.y = Math.max(-20, Math.min(250, y));
+    }, applyQRPos);
+
+    // Initial QR render
+    updateLiveQR();
   </script>
 </body>
 </html>`;
