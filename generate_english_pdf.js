@@ -1,20 +1,25 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const htmlFile = path.resolve(__dirname, 'certificate_en.html').replace(/\\/g, '/');
 const filledPdf = path.resolve(__dirname, 'Certificate_Abdur_Rahman_EN.pdf');
+const tempProfile1 = path.join(os.tmpdir(), 'edge_en_pdf_' + Date.now());
 
 console.log('Generating English PDF for:', htmlFile);
 try {
-  execSync(`"${edgePath}" --headless=new --disable-gpu --no-sandbox --print-to-pdf="${filledPdf}" --no-pdf-header-footer "file:///${htmlFile}"`, { stdio: 'inherit' });
+  execSync(`"${edgePath}" --headless=new --user-data-dir="${tempProfile1}" --disable-gpu --no-sandbox --print-to-pdf="${filledPdf}" --no-pdf-header-footer "file:///${htmlFile}"`, { stdio: 'inherit' });
   console.log('English Filled PDF Generated! Size:', fs.statSync(filledPdf).size, 'bytes');
 } catch (e) {
   console.error('Error generating PDF:', e.message);
+} finally {
+  try { fs.rmSync(tempProfile1, { recursive: true, force: true }); } catch(_) {}
 }
 
 // Generate Blank English PDF
+const tempProfile2 = path.join(os.tmpdir(), 'edge_en_blank_pdf_' + Date.now());
 try {
   let blankHtml = fs.readFileSync('certificate_en.html', 'utf8');
   // clear student data
@@ -38,15 +43,16 @@ try {
                        .replace(/id="stub_view_writer">[^<]*/, 'id="stub_view_writer">')
                        .replace(/id="stub_view_date">[^<]*/, 'id="stub_view_date">');
 
-  const tempBlankHtml = path.resolve(__dirname, 'temp_blank_en.html');
-  fs.writeFileSync(tempBlankHtml, blankHtml);
+  const tmpBlankHtml = path.resolve(__dirname, 'temp_blank_en.html');
+  fs.writeFileSync(tmpBlankHtml, blankHtml);
 
   const blankPdf = path.resolve(__dirname, 'Certificate_Blank_EN.pdf');
-  const tempPath = tempBlankHtml.replace(/\\/g, '/');
-  execSync(`"${edgePath}" --headless=new --disable-gpu --no-sandbox --print-to-pdf="${blankPdf}" --no-pdf-header-footer "file:///${tempPath}"`, { stdio: 'inherit' });
+  execSync(`"${edgePath}" --headless=new --user-data-dir="${tempProfile2}" --disable-gpu --no-sandbox --print-to-pdf="${blankPdf}" --no-pdf-header-footer "file:///${tmpBlankHtml.replace(/\\/g, '/')}"`, { stdio: 'inherit' });
   console.log('English Blank PDF Generated! Size:', fs.statSync(blankPdf).size, 'bytes');
 
-  fs.unlinkSync(tempBlankHtml);
+  fs.unlinkSync(tmpBlankHtml);
 } catch (e) {
-  console.error('Error generating Blank PDF:', e.message);
+  console.error('Error generating blank English PDF:', e.message);
+} finally {
+  try { fs.rmSync(tempProfile2, { recursive: true, force: true }); } catch(_) {}
 }

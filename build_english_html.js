@@ -119,8 +119,8 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 600;
       font-family: 'Inter', sans-serif !important;
       cursor: pointer;
+      border: none;
       transition: all 0.2s ease;
-      border: 1px solid transparent;
       text-decoration: none;
     }
 
@@ -161,31 +161,33 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .btn-lang {
-      background: #0284c7;
+      background: #7c3aed;
       color: white;
-      border: 1px solid rgba(255,255,255,0.3);
     }
     .btn-lang:hover {
-      background: #0369a1;
+      background: #6d28d9;
     }
 
     /* COLLAPSIBLE FORM PANEL */
     .form-panel {
-      width: 95%;
+      width: 100%;
       max-width: 1140px;
-      background: #ffffff;
-      margin: 18px auto 6px auto;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      background: white;
+      margin: 16px auto 6px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      padding: 20px 24px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
-      border: 1px solid #e2e8f0;
+      gap: 15px;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif !important;
     }
-    .form-panel.collapsed {
+    .form-panel.hidden {
       display: none;
     }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -202,13 +204,61 @@ const htmlContent = `<!DOCTYPE html>
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       font-size: 0.94rem;
-      font-family: 'Inter', sans-serif;
+      font-family: 'EB Garamond', serif;
       outline: none;
       transition: border-color 0.2s;
     }
     .form-group input:focus, .form-group select:focus {
       border-color: #2563eb;
       box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    /* SIGNATURE STYLES */
+    .sig-zone {
+      position: relative;
+      cursor: pointer;
+    }
+    .sig-img {
+      max-height: 48px;
+      max-width: 145px;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+    .stub-sig-img {
+      max-height: 28px;
+      max-width: 85px;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+    .sig-upload-btn-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sig-preview-thumb {
+      height: 32px;
+      max-width: 70px;
+      object-fit: contain;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2px;
+      background: #f8fafc;
+      display: none;
+    }
+    .btn-remove-sig {
+      background: #ef4444;
+      color: white;
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-remove-sig:hover {
+      background: #dc2626;
     }
 
     /* INSTRUCTION BANNER */
@@ -335,11 +385,14 @@ const htmlContent = `<!DOCTYPE html>
       align-items: baseline;
       gap: 4px;
     }
+
+    /* LEFT SIDE: NOT BOLD */
     .stub-field {
       border-bottom: 1px dotted #334155;
       flex-grow: 1;
       padding-left: 4px;
-      font-weight: 700;
+      font-weight: 400 !important; /* Left side: NOT bold */
+      -webkit-text-stroke: 0 !important;
       color: #0f172a;
       min-height: 19px;
     }
@@ -424,14 +477,14 @@ const htmlContent = `<!DOCTYPE html>
       margin-bottom: 2px;
     }
     .cert-school-name {
-      font-size: 1.78rem;
+      font-size: 1.85rem;
       font-weight: 900;
-      font-family: 'Cinzel', 'Montserrat', serif;
-      -webkit-text-stroke: 0.5px #000;
+      font-family: 'Montserrat', sans-serif;
+      -webkit-text-stroke: 0.6px #000;
       color: #000000;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      letter-spacing: 0.6px;
       margin-bottom: 2px;
+      text-transform: uppercase;
       white-space: nowrap;
     }
     .cert-logo {
@@ -472,11 +525,13 @@ const htmlContent = `<!DOCTYPE html>
       font-family: 'EB Garamond', serif;
     }
 
+    /* RIGHT SIDE: BOLD */
     .dotted-fill {
       border-bottom: 2px dotted #475569;
       display: inline-block;
-      font-weight: 700;
-      color: #0f172a;
+      font-weight: 800 !important; /* Right side: BOLD */
+      -webkit-text-stroke: 0.35px #000;
+      color: #000000;
       padding: 0 8px;
       text-align: center;
       font-family: 'EB Garamond', serif;
@@ -519,7 +574,9 @@ const htmlContent = `<!DOCTYPE html>
       min-width: 200px;
       display: inline-block;
       padding-left: 6px;
-      font-weight: 600;
+      font-weight: 800 !important; /* Right side: BOLD */
+      -webkit-text-stroke: 0.35px #000;
+      color: #000000;
       min-height: 18px;
       position: relative;
       top: -4px;
@@ -600,7 +657,7 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="action-buttons">
       <a href="index.html" class="btn btn-lang">🇧🇩 বাংলা ভার্সন</a>
-      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ Edit Form</button>
+      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ Edit Form & Signatures</button>
       <button class="btn btn-warning" onclick="loadSampleData()">⭐ Sample Data</button>
       <button class="btn btn-secondary" onclick="clearToBlank()">📄 Blank Form</button>
       <button class="btn btn-success" onclick="printCertificate()">🖨️ Print / PDF</button>
@@ -639,16 +696,36 @@ const htmlContent = `<!DOCTYPE html>
       <input type="text" id="input_class" value="Play" oninput="updateField('class', this.value)">
     </div>
     <div class="form-group">
-      <label>Assessment Class:</label>
-      <input type="text" id="input_eval_class" value="Play" oninput="updateField('eval_class', this.value)">
-    </div>
-    <div class="form-group">
       <label>Prepared by:</label>
-      <input type="text" id="input_writer" value="Rafiqul Islam" oninput="updateField('writer', this.value)">
+      <input type="text" id="input_writer" value="" placeholder="Writer / Prepared by (Optional)" oninput="updateField('writer', this.value)">
     </div>
     <div class="form-group">
       <label>Date:</label>
-      <input type="text" id="input_date" value="15-12-2026" oninput="updateField('date', this.value)">
+      <input type="text" id="input_date" value="" placeholder="Date (Optional)" oninput="updateField('date', this.value)">
+    </div>
+
+    <!-- SIGNATURE UPLOADS -->
+    <div class="form-group">
+      <label>Prepared by Signature:</label>
+      <input type="file" id="upload_writer_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'writer')">
+      <div class="sig-upload-btn-wrap">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('writer')">✍️ Upload Signature</button>
+        <img id="preview_writer_sig" class="sig-preview-thumb" alt="Preview">
+        <button type="button" id="btn_remove_writer_sig" class="btn-remove-sig" onclick="removeSignature('writer')">✕ Remove</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Headmaster Signature:</label>
+      <input type="file" id="upload_headmaster_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'headmaster')">
+      <div class="sig-upload-btn-wrap">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('headmaster')">✍️ Upload Signature</button>
+        <img id="preview_headmaster_sig" class="sig-preview-thumb" alt="Preview">
+        <button type="button" id="btn_remove_headmaster_sig" class="btn-remove-sig" onclick="removeSignature('headmaster')">✕ Remove</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px;">
+      <button class="btn btn-secondary" type="button" onclick="toggleFormPanel()">Close Panel</button>
     </div>
   </section>
 
@@ -712,16 +789,26 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="stub-footer">
           <div class="stub-writer-date">
-            <div style="display:flex; align-items:baseline; gap:4px;">
+            <div style="display:flex; align-items:baseline; gap:4px; position: relative;">
               <span>Prepared:</span>
-              <span class="stub-field" style="width: 100px;" id="stub_view_writer"></span>
+              <div style="position: relative; flex-grow: 1; display: inline-flex; align-items: baseline;">
+                <div id="stub_writer_sig_wrap" style="display: none; position: absolute; bottom: 2px; left: 5px; z-index: 5;">
+                  <img id="stub_writer_sig_img" class="stub-sig-img" src="" alt="Signature">
+                </div>
+                <span class="stub-field" style="width: 100px;" id="stub_view_writer"></span>
+              </div>
             </div>
             <div style="display:flex; align-items:baseline; gap:4px;">
               <span>Date:</span>
               <span class="stub-field" style="width: 100px;" id="stub_view_date"></span>
             </div>
           </div>
-          <div class="stub-signature-title">Headmaster</div>
+          <div class="stub-signature-title" style="position: relative;">
+            <div id="stub_headmaster_sig_wrap" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); z-index: 5; margin-bottom: 2px;">
+              <img id="stub_headmaster_sig_img" class="stub-sig-img" src="" alt="Signature">
+            </div>
+            Headmaster
+          </div>
         </div>
       </aside>
 
@@ -791,9 +878,14 @@ const htmlContent = `<!DOCTYPE html>
           <!-- Footer -->
           <div class="cert-footer">
             <div class="footer-left">
-              <div class="footer-left-row">
+              <div class="footer-left-row" style="position: relative;">
                 <span>Prepared by:</span>
-                <span class="footer-dotted" id="main_view_writer" contenteditable="true"></span>
+                <div style="position: relative; display: inline-flex; align-items: baseline;">
+                  <div id="main_writer_sig_wrap" class="sig-zone" onclick="triggerSigUpload('writer')" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="Click to upload/change signature">
+                    <img id="main_writer_sig_img" class="sig-img" src="" alt="Writer Signature">
+                  </div>
+                  <span class="footer-dotted" id="main_view_writer" contenteditable="true"></span>
+                </div>
               </div>
               <div class="footer-left-row">
                 <span>Date:</span>
@@ -801,7 +893,12 @@ const htmlContent = `<!DOCTYPE html>
               </div>
             </div>
             <div class="footer-right">
-              <div class="sign-line"></div>
+              <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                <div id="main_headmaster_sig_wrap" class="sig-zone" onclick="triggerSigUpload('headmaster')" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="Click to upload/change signature">
+                  <img id="main_headmaster_sig_img" class="sig-img" src="" alt="Headmaster Signature">
+                </div>
+                <div class="sign-line"></div>
+              </div>
               <div class="headmaster-title">Headmaster</div>
             </div>
           </div>
@@ -820,7 +917,7 @@ const htmlContent = `<!DOCTYPE html>
       },
       shawkat: {
         name: 'SHAWKAT BHUIYAN CHILD CARE HOMES',
-        address: 'Kongshonagar, Burichang, Cumilla.',
+        address: 'Kangshanagar, Burichang, Cumilla.',
         logo: '${assets.shawkat_logo_en}'
       }
     };
@@ -837,57 +934,133 @@ const htmlContent = `<!DOCTYPE html>
 
       document.getElementById('stub_logo_img').src = school.logo;
       document.getElementById('cert_logo_img').src = school.logo;
-      document.getElementById('watermark_bg').style.backgroundImage = 'url(' + school.logo + ')';
+      document.getElementById('watermark_bg').style.backgroundImage = 'url(\"' + school.logo + '\")';
     }
 
     function toggleFormPanel() {
       const panel = document.getElementById('formPanel');
-      panel.classList.toggle('collapsed');
+      panel.classList.toggle('hidden');
     }
 
-    function updateField(fieldKey, value) {
-      const mainEl = document.getElementById('main_view_' + fieldKey);
-      if (mainEl) mainEl.innerText = value;
+    function updateField(field, val) {
+      const mainEl = document.getElementById('main_view_' + field);
+      const stubEl = document.getElementById('stub_view_' + field);
+      if (mainEl) mainEl.innerText = val;
+      if (stubEl) stubEl.innerText = val;
 
-      const stubEl = document.getElementById('stub_view_' + fieldKey);
-      if (stubEl) stubEl.innerText = value;
-
-      if (fieldKey === 'class') {
-        const evalStub = document.getElementById('stub_view_eval_class');
-        if (evalStub) evalStub.innerText = value;
+      if (field === 'class') {
+        const stubEval = document.getElementById('stub_view_eval_class');
+        if (stubEval) stubEval.innerText = val;
       }
     }
 
-    function clearToBlank() {
-      const fields = ['name', 'father', 'mother', 'dob', 'roll', 'year', 'class', 'eval_class', 'writer', 'date'];
-      fields.forEach(f => {
-        const input = document.getElementById('input_' + f);
-        if (input) input.value = '';
-        const main = document.getElementById('main_view_' + f);
-        if (main) main.innerText = '';
-        const stub = document.getElementById('stub_view_' + f);
-        if (stub) stub.innerText = '';
-      });
+    // SIGNATURE UPLOAD & MANAGEMENT
+    function triggerSigUpload(type) {
+      if (type === 'writer') {
+        document.getElementById('upload_writer_sig').click();
+      } else if (type === 'headmaster') {
+        document.getElementById('upload_headmaster_sig').click();
+      }
+    }
+
+    function handleSigUpload(event, type) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        setSignature(type, e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setSignature(type, dataUrl) {
+      if (type === 'writer') {
+        const mainWrap = document.getElementById('main_writer_sig_wrap');
+        const mainImg = document.getElementById('main_writer_sig_img');
+        const stubWrap = document.getElementById('stub_writer_sig_wrap');
+        const stubImg = document.getElementById('stub_writer_sig_img');
+        const removeBtn = document.getElementById('btn_remove_writer_sig');
+        const preview = document.getElementById('preview_writer_sig');
+
+        if (dataUrl) {
+          if (mainImg) mainImg.src = dataUrl;
+          if (mainWrap) mainWrap.style.display = 'block';
+          if (stubImg) stubImg.src = dataUrl;
+          if (stubWrap) stubWrap.style.display = 'block';
+          if (removeBtn) removeBtn.style.display = 'inline-block';
+          if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+        } else {
+          if (mainImg) mainImg.src = '';
+          if (mainWrap) mainWrap.style.display = 'none';
+          if (stubImg) stubImg.src = '';
+          if (stubWrap) stubWrap.style.display = 'none';
+          if (removeBtn) removeBtn.style.display = 'none';
+          if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          const input = document.getElementById('upload_writer_sig');
+          if (input) input.value = '';
+        }
+      } else if (type === 'headmaster') {
+        const mainWrap = document.getElementById('main_headmaster_sig_wrap');
+        const mainImg = document.getElementById('main_headmaster_sig_img');
+        const stubWrap = document.getElementById('stub_headmaster_sig_wrap');
+        const stubImg = document.getElementById('stub_headmaster_sig_img');
+        const removeBtn = document.getElementById('btn_remove_headmaster_sig');
+        const preview = document.getElementById('preview_headmaster_sig');
+
+        if (dataUrl) {
+          if (mainImg) mainImg.src = dataUrl;
+          if (mainWrap) mainWrap.style.display = 'block';
+          if (stubImg) stubImg.src = dataUrl;
+          if (stubWrap) stubWrap.style.display = 'block';
+          if (removeBtn) removeBtn.style.display = 'inline-block';
+          if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+        } else {
+          if (mainImg) mainImg.src = '';
+          if (mainWrap) mainWrap.style.display = 'none';
+          if (stubImg) stubImg.src = '';
+          if (stubWrap) stubWrap.style.display = 'none';
+          if (removeBtn) removeBtn.style.display = 'none';
+          if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          const input = document.getElementById('upload_headmaster_sig');
+          if (input) input.value = '';
+        }
+      }
+    }
+
+    function removeSignature(type) {
+      setSignature(type, '');
     }
 
     function loadSampleData() {
-      const sample = {
-        name: 'Md. Abdur Rahman',
-        father: 'Md. Mominul Islam',
-        mother: 'Sathi Akter',
-        dob: '01-04-2021',
-        roll: '16',
-        year: '2026',
-        class: 'Play',
-        eval_class: 'Play',
-        writer: 'Rafiqul Islam',
-        date: '15-12-2026'
-      };
-      for (const [k, v] of Object.entries(sample)) {
-        const input = document.getElementById('input_' + k);
-        if (input) input.value = v;
-        updateField(k, v);
-      }
+      document.getElementById('input_name').value = 'Md. Abdur Rahman';
+      document.getElementById('input_father').value = 'Md. Mominul Islam';
+      document.getElementById('input_mother').value = 'Sathi Akter';
+      document.getElementById('input_dob').value = '01-04-2021';
+      document.getElementById('input_roll').value = '16';
+      document.getElementById('input_year').value = '2026';
+      document.getElementById('input_class').value = 'Play';
+      document.getElementById('input_writer').value = '';
+      document.getElementById('input_date').value = '';
+
+      updateField('name', 'Md. Abdur Rahman');
+      updateField('father', 'Md. Mominul Islam');
+      updateField('mother', 'Sathi Akter');
+      updateField('dob', '01-04-2021');
+      updateField('roll', '16');
+      updateField('year', '2026');
+      updateField('class', 'Play');
+      updateField('writer', '');
+      updateField('date', '');
+    }
+
+    function clearToBlank() {
+      ['name', 'father', 'mother', 'dob', 'roll', 'year', 'class', 'writer', 'date'].forEach(f => {
+        const inp = document.getElementById('input_' + f);
+        if (inp) inp.value = '';
+        updateField(f, '');
+      });
+      removeSignature('writer');
+      removeSignature('headmaster');
     }
 
     function printCertificate() {
@@ -896,15 +1069,25 @@ const htmlContent = `<!DOCTYPE html>
 
     function downloadAsImage() {
       const sheet = document.getElementById('certificateSheet');
+      const cutLine = document.querySelector('.cut-line-indicator');
+      if (cutLine) cutLine.style.display = 'none';
+
       html2canvas(sheet, {
         scale: 2,
         useCORS: true,
-        logging: false
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       }).then(canvas => {
+        if (cutLine) cutLine.style.display = 'block';
         const link = document.createElement('a');
-        link.download = 'Student_Certificate_EN.png';
+        const schoolKey = document.getElementById('schoolSelector').value;
+        const schoolTitle = schoolKey === 'precadet' ? 'Pre_Cadet' : 'Shawkat_Bhuiyan';
+        link.download = 'Certificate_' + schoolTitle + '_' + (document.getElementById('input_name').value || 'Sample') + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+      }).catch(err => {
+        if (cutLine) cutLine.style.display = 'block';
+        alert('Image generation failed: ' + err.message);
       });
     }
   </script>
@@ -913,4 +1096,4 @@ const htmlContent = `<!DOCTYPE html>
 
 fs.writeFileSync('certificate_en.html', htmlContent);
 fs.writeFileSync('Certificate_Generator_EN.html', htmlContent);
-console.log('certificate_en.html & Certificate_Generator_EN.html built successfully!');
+console.log('certificate_en.html and Certificate_Generator_EN.html successfully rebuilt with all fixes!');

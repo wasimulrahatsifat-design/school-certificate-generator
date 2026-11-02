@@ -120,8 +120,8 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 600;
       font-family: 'Hind Siliguri', sans-serif !important;
       cursor: pointer;
+      border: none;
       transition: all 0.2s ease;
-      border: 1px solid transparent;
       text-decoration: none;
     }
 
@@ -204,6 +204,54 @@ const htmlContent = `<!DOCTYPE html>
     .form-group input:focus, .form-group select:focus {
       border-color: #2563eb;
       box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    /* SIGNATURE STYLES */
+    .sig-zone {
+      position: relative;
+      cursor: pointer;
+    }
+    .sig-img {
+      max-height: 48px;
+      max-width: 145px;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+    .stub-sig-img {
+      max-height: 28px;
+      max-width: 85px;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+    .sig-upload-btn-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sig-preview-thumb {
+      height: 32px;
+      max-width: 70px;
+      object-fit: contain;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2px;
+      background: #f8fafc;
+      display: none;
+    }
+    .btn-remove-sig {
+      background: #ef4444;
+      color: white;
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-remove-sig:hover {
+      background: #dc2626;
     }
 
     /* INSTRUCTION BANNER */
@@ -324,11 +372,14 @@ const htmlContent = `<!DOCTYPE html>
       align-items: baseline;
       gap: 4px;
     }
+
+    /* LEFT SIDE: NOT BOLD */
     .stub-field {
       border-bottom: 1px dotted #334155;
       flex-grow: 1;
       padding-left: 4px;
-      font-weight: 700;
+      font-weight: 400 !important; /* বামসাইডে বোল্ড হবে না */
+      -webkit-text-stroke: 0 !important;
       color: #0f172a;
       min-height: 19px;
     }
@@ -435,7 +486,7 @@ const htmlContent = `<!DOCTYPE html>
       margin-top: 3px;
     }
 
-    /* TITLE BANNER (Clean Vector Banner) */
+    /* TITLE BANNER (Clean Vector Banner with Authentic Calligraphy) */
     .cert-banner-wrapper {
       text-align: center;
       margin: 4px 0 8px 0;
@@ -448,17 +499,19 @@ const htmlContent = `<!DOCTYPE html>
 
     /* CERTIFICATE BODY TEXT */
     .cert-body {
-      font-size: 1.15rem;
-      line-height: 1.82;
+      font-size: 1.34rem;
+      line-height: 1.84;
       color: #0f172a;
       text-align: justify;
     }
 
+    /* RIGHT SIDE: BOLD */
     .dotted-fill {
       border-bottom: 2px dotted #475569;
       display: inline-block;
-      font-weight: 700;
-      color: #0f172a;
+      font-weight: 800 !important; /* ডানসাইডে যা যা বক্সে লেখা হয় তা বোল্ড হবে */
+      -webkit-text-stroke: 0.35px #000;
+      color: #000000;
       padding: 0 8px;
       text-align: center;
     }
@@ -498,7 +551,9 @@ const htmlContent = `<!DOCTYPE html>
       min-width: 200px;
       display: inline-block;
       padding-left: 6px;
-      font-weight: 600;
+      font-weight: 800 !important; /* ডানসাইডে যা যা বক্সে লেখা হয় তা বোল্ড হবে */
+      -webkit-text-stroke: 0.35px #000;
+      color: #000000;
       min-height: 18px;
       position: relative;
       top: -4px;
@@ -593,7 +648,7 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="action-buttons">
       <a href="certificate_en.html" class="btn" style="background:#0284c7; color:#fff;">🇬🇧 English Version</a>
-      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ তথ্য ফরম</button>
+      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ তথ্য ও স্বাক্ষর ফরম</button>
       <button class="btn btn-warning" onclick="loadSampleData()">⭐ নমুনা ডেটা</button>
       <button class="btn btn-secondary" onclick="clearToBlank()">📄 খালি ফরম</button>
       <button class="btn btn-success" onclick="printCertificate()">🖨️ প্রিন্ট / PDF</button>
@@ -639,13 +694,34 @@ const htmlContent = `<!DOCTYPE html>
       <label>তারিখ:</label>
       <input type="text" id="input_date" value="" placeholder="তারিখ (ঐচ্ছিক)" oninput="syncData()">
     </div>
+
+    <!-- SIGNATURE UPLOADS -->
+    <div class="form-group">
+      <label>লেখকের স্বাক্ষর (সিগনেচার):</label>
+      <input type="file" id="upload_writer_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'writer')">
+      <div class="sig-upload-btn-wrap">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('writer')">✍️ স্বাক্ষর আপলোড</button>
+        <img id="preview_writer_sig" class="sig-preview-thumb" alt="Preview">
+        <button type="button" id="btn_remove_writer_sig" class="btn-remove-sig" onclick="removeSignature('writer')">✕ সরান</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>প্রধান শিক্ষকের স্বাক্ষর (সিগনেচার):</label>
+      <input type="file" id="upload_headmaster_sig" accept="image/*" style="display: none;" onchange="handleSigUpload(event, 'headmaster')">
+      <div class="sig-upload-btn-wrap">
+        <button type="button" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 11px;" onclick="triggerSigUpload('headmaster')">✍️ স্বাক্ষর আপলোড</button>
+        <img id="preview_headmaster_sig" class="sig-preview-thumb" alt="Preview">
+        <button type="button" id="btn_remove_headmaster_sig" class="btn-remove-sig" onclick="removeSignature('headmaster')">✕ সরান</button>
+      </div>
+    </div>
+
     <div class="form-group" style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px;">
       <button class="btn btn-secondary" type="button" onclick="toggleFormPanel()">প্যানেল বন্ধ করুন</button>
     </div>
   </section>
 
   <div class="hint-banner">
-    <span>💡 <b>টিপস:</b> ফন্ট হিসেবে কালপুরুষ (Sutonny Unicode) সেট করা হয়েছে। লেখক ও তারিখ উভয়ের নিচেই ডট ডট রয়েছে। সম্পূর্ণ প্রত্যয়নপত্রটি A4 সাইজের এক পাতায় প্রিন্ট হবে।</span>
+    <span>💡 <b>টিপস:</b> ফন্ট হিসেবে কালপুরুষ ও সুতন্নী সেট করা হয়েছে। লেখক ও প্রধান শিক্ষক উভয়ের স্বাক্ষর আপলোড করতে পারেন। সম্পূর্ণ প্রত্যয়নপত্রটি A4 সাইজের এক পাতায় নিখুঁতভাবে প্রিন্ট হবে।</span>
     <span style="font-size: 0.85rem; font-weight: 600;">সাইজ: A4 Landscape (297 × 210 mm)</span>
   </div>
 
@@ -703,16 +779,26 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="stub-footer">
           <div class="stub-writer-date">
-            <div style="display:flex; align-items:baseline; gap:4px;">
+            <div style="display:flex; align-items:baseline; gap:4px; position: relative;">
               <span>লেখক:</span>
-              <span class="stub-field" style="width: 105px;" id="stub_view_writer"></span>
+              <div style="position: relative; flex-grow: 1; display: inline-flex; align-items: baseline;">
+                <div id="stub_writer_sig_wrap" style="display: none; position: absolute; bottom: 2px; left: 5px; z-index: 5;">
+                  <img id="stub_writer_sig_img" class="stub-sig-img" src="" alt="স্বাক্ষর">
+                </div>
+                <span class="stub-field" style="width: 105px;" id="stub_view_writer"></span>
+              </div>
             </div>
             <div style="display:flex; align-items:baseline; gap:4px;">
               <span>তারিখ:</span>
               <span class="stub-field" style="width: 105px;" id="stub_view_date"></span>
             </div>
           </div>
-          <div class="stub-signature-title">প্রধান শিক্ষক</div>
+          <div class="stub-signature-title" style="position: relative;">
+            <div id="stub_headmaster_sig_wrap" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); z-index: 5; margin-bottom: 2px;">
+              <img id="stub_headmaster_sig_img" class="stub-sig-img" src="" alt="স্বাক্ষর">
+            </div>
+            প্রধান শিক্ষক
+          </div>
         </div>
       </aside>
 
@@ -729,7 +815,7 @@ const htmlContent = `<!DOCTYPE html>
             <div class="cert-address" contenteditable="true" id="cert_address">দেবপুর, বুড়িচং, কুমিল্লা।</div>
           </div>
 
-          <!-- Banner Title (Clean Vector Banner) -->
+          <!-- Banner Title (Clean Vector Banner with Authentic Calligraphy) -->
           <div class="cert-banner-wrapper">
             <img src="${assets.clean_banner}" alt="প্রত্যয়নপত্র" class="cert-banner-img">
           </div>
@@ -776,12 +862,17 @@ const htmlContent = `<!DOCTYPE html>
             <div>আমি তাহার উজ্জ্বল ভবিষ্যৎ কামনা করি।</div>
           </div>
 
-          <!-- Footer ( লেখক ও তারিখ উভয়ের নিচেই ডট ডট এবং নিখুঁত অবস্থান ) -->
+          <!-- Footer ( লেখক ও প্রধান শিক্ষকের স্বাক্ষর এবং নিখুঁত অবস্থান ) -->
           <div class="cert-footer">
             <div class="footer-left">
-              <div class="footer-left-row">
+              <div class="footer-left-row" style="position: relative;">
                 <span>লেখক:</span>
-                <span class="footer-dotted" id="main_view_writer" contenteditable="true"></span>
+                <div style="position: relative; display: inline-flex; align-items: baseline;">
+                  <div id="main_writer_sig_wrap" class="sig-zone" onclick="triggerSigUpload('writer')" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড বা পরিবর্তন করুন">
+                    <img id="main_writer_sig_img" class="sig-img" src="" alt="লেখকের স্বাক্ষর">
+                  </div>
+                  <span class="footer-dotted" id="main_view_writer" contenteditable="true"></span>
+                </div>
               </div>
               <div class="footer-left-row">
                 <span>তারিখ:</span>
@@ -790,7 +881,12 @@ const htmlContent = `<!DOCTYPE html>
             </div>
 
             <div class="footer-right">
-              <div class="sign-line"></div>
+              <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                <div id="main_headmaster_sig_wrap" class="sig-zone" onclick="triggerSigUpload('headmaster')" style="display: none; position: absolute; bottom: 3px; z-index: 5;" title="ক্লিক করে স্বাক্ষর আপলোড বা পরিবর্তন করুন">
+                  <img id="main_headmaster_sig_img" class="sig-img" src="" alt="প্রধান শিক্ষকের স্বাক্ষর">
+                </div>
+                <div class="sign-line"></div>
+              </div>
               <div class="headmaster-title" contenteditable="true">প্রধান শিক্ষক</div>
             </div>
           </div>
@@ -845,7 +941,7 @@ const htmlContent = `<!DOCTYPE html>
       const writer = document.getElementById('input_writer').value;
       const dateVal = document.getElementById('input_date').value;
 
-      // Sync Stub
+      // Sync Stub (Left - Not Bold)
       document.getElementById('stub_view_name').innerText = name;
       document.getElementById('stub_view_father').innerText = father;
       document.getElementById('stub_view_mother').innerText = mother;
@@ -857,7 +953,7 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('stub_view_writer').innerText = writer;
       document.getElementById('stub_view_date').innerText = dateVal;
 
-      // Sync Main
+      // Sync Main (Right - Bold)
       document.getElementById('main_view_name').innerText = name;
       document.getElementById('main_view_father').innerText = father;
       document.getElementById('main_view_mother').innerText = mother;
@@ -868,6 +964,83 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('main_view_eval_class').innerText = cls;
       document.getElementById('main_view_writer').innerText = writer;
       document.getElementById('main_view_date').innerText = dateVal;
+    }
+
+    // SIGNATURE UPLOAD & MANAGEMENT
+    function triggerSigUpload(type) {
+      if (type === 'writer') {
+        document.getElementById('upload_writer_sig').click();
+      } else if (type === 'headmaster') {
+        document.getElementById('upload_headmaster_sig').click();
+      }
+    }
+
+    function handleSigUpload(event, type) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        setSignature(type, e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setSignature(type, dataUrl) {
+      if (type === 'writer') {
+        const mainWrap = document.getElementById('main_writer_sig_wrap');
+        const mainImg = document.getElementById('main_writer_sig_img');
+        const stubWrap = document.getElementById('stub_writer_sig_wrap');
+        const stubImg = document.getElementById('stub_writer_sig_img');
+        const removeBtn = document.getElementById('btn_remove_writer_sig');
+        const preview = document.getElementById('preview_writer_sig');
+
+        if (dataUrl) {
+          if (mainImg) mainImg.src = dataUrl;
+          if (mainWrap) mainWrap.style.display = 'block';
+          if (stubImg) stubImg.src = dataUrl;
+          if (stubWrap) stubWrap.style.display = 'block';
+          if (removeBtn) removeBtn.style.display = 'inline-block';
+          if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+        } else {
+          if (mainImg) mainImg.src = '';
+          if (mainWrap) mainWrap.style.display = 'none';
+          if (stubImg) stubImg.src = '';
+          if (stubWrap) stubWrap.style.display = 'none';
+          if (removeBtn) removeBtn.style.display = 'none';
+          if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          const input = document.getElementById('upload_writer_sig');
+          if (input) input.value = '';
+        }
+      } else if (type === 'headmaster') {
+        const mainWrap = document.getElementById('main_headmaster_sig_wrap');
+        const mainImg = document.getElementById('main_headmaster_sig_img');
+        const stubWrap = document.getElementById('stub_headmaster_sig_wrap');
+        const stubImg = document.getElementById('stub_headmaster_sig_img');
+        const removeBtn = document.getElementById('btn_remove_headmaster_sig');
+        const preview = document.getElementById('preview_headmaster_sig');
+
+        if (dataUrl) {
+          if (mainImg) mainImg.src = dataUrl;
+          if (mainWrap) mainWrap.style.display = 'block';
+          if (stubImg) stubImg.src = dataUrl;
+          if (stubWrap) stubWrap.style.display = 'block';
+          if (removeBtn) removeBtn.style.display = 'inline-block';
+          if (preview) { preview.src = dataUrl; preview.style.display = 'inline-block'; }
+        } else {
+          if (mainImg) mainImg.src = '';
+          if (mainWrap) mainWrap.style.display = 'none';
+          if (stubImg) stubImg.src = '';
+          if (stubWrap) stubWrap.style.display = 'none';
+          if (removeBtn) removeBtn.style.display = 'none';
+          if (preview) { preview.src = ''; preview.style.display = 'none'; }
+          const input = document.getElementById('upload_headmaster_sig');
+          if (input) input.value = '';
+        }
+      }
+    }
+
+    function removeSignature(type) {
+      setSignature(type, '');
     }
 
     function loadSampleData() {
@@ -893,6 +1066,8 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('input_class').value = '';
       document.getElementById('input_writer').value = '';
       document.getElementById('input_date').value = '';
+      removeSignature('writer');
+      removeSignature('headmaster');
       syncData();
     }
 

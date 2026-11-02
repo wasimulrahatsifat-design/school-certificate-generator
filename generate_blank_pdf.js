@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 let html = fs.readFileSync('index.html', 'utf8');
@@ -38,15 +39,19 @@ html = html.replace('id="stub_view_name">মো: আবদুর রহমান
 // Remove auto sample sync call
 html = html.replace('syncData();', '// syncData();');
 
-fs.writeFileSync('blank.html', html);
+const tempHtml = path.resolve(__dirname, 'temp_blank.html');
+fs.writeFileSync(tempHtml, html);
 
-const htmlFile = path.resolve(__dirname, 'blank.html').replace(/\\/g, '/');
 const outFile = path.resolve(__dirname, 'প্রত্যয়নপত্র_খালি_ফরম.pdf');
+const tempProfile = path.join(os.tmpdir(), 'edge_blank_pdf_' + Date.now());
 
+console.log('Generating blank PDF for:', tempHtml);
 try {
-  execSync(`"${edgePath}" --headless=new --disable-gpu --no-sandbox --print-to-pdf="${outFile}" --no-pdf-header-footer "file:///${htmlFile}"`, { stdio: 'inherit' });
+  execSync(`"${edgePath}" --headless=new --user-data-dir="${tempProfile}" --disable-gpu --no-sandbox --print-to-pdf="${outFile}" --no-pdf-header-footer "file:///${tempHtml.replace(/\\/g, '/')}"`, { stdio: 'inherit' });
   console.log('Blank PDF Generated successfully! Size:', fs.statSync(outFile).size, 'bytes');
-  fs.unlinkSync('blank.html');
+  fs.unlinkSync(tempHtml);
 } catch (e) {
-  console.error('Error generating Blank PDF:', e.message);
+  console.error('Error generating blank PDF:', e.message);
+} finally {
+  try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch(_) {}
 }
