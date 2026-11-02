@@ -261,23 +261,6 @@ const htmlContent = `<!DOCTYPE html>
       background: #dc2626;
     }
 
-    /* INSTRUCTION BANNER */
-    .hint-banner {
-      max-width: 1140px;
-      width: 95%;
-      margin: 8px auto;
-      background: #e0f2fe;
-      border-left: 4px solid #0284c7;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      color: #0369a1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: 'Inter', sans-serif !important;
-    }
-
     /* CERTIFICATE VIEWPORT (Strict A4 Landscape 297mm x 210mm) */
     .certificate-viewport {
       margin: 12px auto 30px auto;
@@ -301,7 +284,7 @@ const htmlContent = `<!DOCTYPE html>
     .stub-section {
       width: 325px;
       height: 100%;
-      padding: 22px 18px 20px 18px;
+      padding: 20px 18px 20px 18px;
       background: url('${assets.stub_exact_bg}') no-repeat center center;
       background-size: 100% 100%;
       border-right: 2px dashed #94a3b8;
@@ -341,15 +324,15 @@ const htmlContent = `<!DOCTYPE html>
       font-family: 'Montserrat', sans-serif;
       -webkit-text-stroke: 0.3px #0f172a;
       color: #0f172a;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       letter-spacing: 0.2px;
       text-transform: uppercase;
       white-space: nowrap;
     }
     .stub-logo {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 3px auto;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 2px auto;
       display: block;
       border-radius: 50%;
     }
@@ -359,12 +342,23 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 800;
       font-family: 'Inter', sans-serif;
       -webkit-text-stroke: 0.35px #0f172a;
-      margin-bottom: 6px;
+      margin-bottom: 1px;
+    }
+    .stub-reg-no {
+      font-size: 0.62rem;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      -webkit-text-stroke: 0.2px #0f172a;
+      color: #0f172a;
+      margin-top: 1px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      letter-spacing: -0.15px;
     }
 
     .stub-banner-wrapper {
       text-align: center;
-      margin: 3px 0 8px 0;
+      margin: 2px 0 6px 0;
     }
     .stub-banner-img {
       height: 30px;
@@ -466,7 +460,7 @@ const htmlContent = `<!DOCTYPE html>
       position: relative;
       z-index: 10;
       height: 100%;
-      padding: 34px 46px 26px 46px;
+      padding: 30px 46px 24px 46px;
       display: flex;
       flex-direction: column;
     }
@@ -474,7 +468,7 @@ const htmlContent = `<!DOCTYPE html>
     /* CERTIFICATE HEADER */
     .cert-header {
       text-align: center;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .cert-school-name {
       font-size: 1.85rem;
@@ -483,13 +477,13 @@ const htmlContent = `<!DOCTYPE html>
       -webkit-text-stroke: 0.6px #000;
       color: #000000;
       letter-spacing: 0.6px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
       text-transform: uppercase;
       white-space: nowrap;
     }
     .cert-logo {
-      width: 74px;
-      height: 74px;
+      width: 72px;
+      height: 72px;
       margin: 0 auto;
       display: block;
       border-radius: 50%;
@@ -501,17 +495,27 @@ const htmlContent = `<!DOCTYPE html>
       font-family: 'Inter', sans-serif;
       -webkit-text-stroke: 0.4px #0f172a;
       color: #0f172a;
-      margin-top: 3px;
+      margin-top: 2px;
       letter-spacing: 0.5px;
+    }
+    .cert-reg-no {
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      -webkit-text-stroke: 0.35px #0f172a;
+      color: #0f172a;
+      margin-top: 2px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
     }
 
     /* TITLE BANNER (Vector Banner) */
     .cert-banner-wrapper {
       text-align: center;
-      margin: 4px 0 8px 0;
+      margin: 3px 0 6px 0;
     }
     .cert-banner-img {
-      height: 56px;
+      height: 54px;
       display: inline-block;
       filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.2));
     }
@@ -618,7 +622,7 @@ const htmlContent = `<!DOCTYPE html>
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .top-toolbar, .form-panel, .hint-banner {
+      .top-toolbar, .form-panel {
         display: none !important;
       }
       .certificate-viewport {
@@ -729,12 +733,6 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- HINT / INSTRUCTION BANNER -->
-  <div class="hint-banner">
-    <span>💡 <b>Tip:</b> High quality English typography with authentic royal certificate layout. Single page A4 Landscape.</span>
-    <span style="font-size: 0.85rem; font-weight: 600;">Size: A4 Landscape (297 × 210 mm)</span>
-  </div>
-
   <!-- CERTIFICATE CANVAS -->
   <main class="certificate-viewport" id="certificateViewport">
     <div class="certificate-sheet" id="certificateSheet">
@@ -745,6 +743,7 @@ const htmlContent = `<!DOCTYPE html>
           <h2 class="stub-school-name" contenteditable="true" id="stub_school_name">PRE-CADET CHILD CARE HOMES</h2>
           <img src="${assets.precadet_logo_en}" alt="School Logo" class="stub-logo" id="stub_logo_img">
           <div class="stub-address" contenteditable="true" id="stub_address">Debpur, Burichang, Cumilla.</div>
+          <div class="stub-reg-no" contenteditable="true" id="stub_reg_no">Bangladesh Kindergarten Association Govt. Reg. No. 1028/98/736</div>
           <div class="stub-banner-wrapper">
             <img src="${assets.stub_banner_en}" alt="CERTIFICATE" class="stub-banner-img">
           </div>
@@ -823,6 +822,7 @@ const htmlContent = `<!DOCTYPE html>
             <h1 class="cert-school-name" contenteditable="true" id="cert_school_name">PRE-CADET CHILD CARE HOMES</h1>
             <img src="${assets.precadet_logo_en}" alt="School Logo" class="cert-logo" id="cert_logo_img">
             <div class="cert-address" contenteditable="true" id="cert_address">Debpur, Burichang, Cumilla.</div>
+            <div class="cert-reg-no" contenteditable="true" id="cert_reg_no">Bangladesh Kindergarten Association Govt. Reg. No. 1028/98/736</div>
           </div>
 
           <!-- Banner Title (Vector Banner) -->
@@ -913,11 +913,13 @@ const htmlContent = `<!DOCTYPE html>
       precadet: {
         name: 'PRE-CADET CHILD CARE HOMES',
         address: 'Debpur, Burichang, Cumilla.',
+        reg: 'Bangladesh Kindergarten Association Govt. Reg. No. 1028/98/736',
         logo: '${assets.precadet_logo_en}'
       },
       shawkat: {
         name: 'SHAWKAT BHUIYAN CHILD CARE HOMES',
         address: 'Kangshanagar, Burichang, Cumilla.',
+        reg: '',
         logo: '${assets.shawkat_logo_en}'
       }
     };
@@ -931,6 +933,9 @@ const htmlContent = `<!DOCTYPE html>
 
       document.getElementById('stub_address').innerText = school.address;
       document.getElementById('cert_address').innerText = school.address;
+
+      document.getElementById('stub_reg_no').innerText = school.reg;
+      document.getElementById('cert_reg_no').innerText = school.reg;
 
       document.getElementById('stub_logo_img').src = school.logo;
       document.getElementById('cert_logo_img').src = school.logo;
@@ -1096,4 +1101,4 @@ const htmlContent = `<!DOCTYPE html>
 
 fs.writeFileSync('certificate_en.html', htmlContent);
 fs.writeFileSync('Certificate_Generator_EN.html', htmlContent);
-console.log('certificate_en.html and Certificate_Generator_EN.html successfully rebuilt with all fixes!');
+console.log('certificate_en.html and Certificate_Generator_EN.html successfully rebuilt with reg no and no tips banner!');

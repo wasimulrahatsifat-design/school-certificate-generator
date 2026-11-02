@@ -254,23 +254,6 @@ const htmlContent = `<!DOCTYPE html>
       background: #dc2626;
     }
 
-    /* INSTRUCTION BANNER */
-    .hint-banner {
-      max-width: 1140px;
-      width: 95%;
-      margin: 8px auto;
-      background: #e0f2fe;
-      border-left: 4px solid #0284c7;
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      color: #0369a1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: 'Hind Siliguri', sans-serif !important;
-    }
-
     /* CERTIFICATE VIEWPORT (Strict A4 Landscape 297mm x 210mm) */
     .certificate-viewport {
       margin: 12px auto 30px auto;
@@ -294,7 +277,7 @@ const htmlContent = `<!DOCTYPE html>
     .stub-section {
       width: 325px;
       height: 100%;
-      padding: 22px 18px 20px 18px;
+      padding: 20px 18px 20px 18px;
       background: url('${assets.stub_exact_bg}') no-repeat center center;
       background-size: 100% 100%;
       border-right: 2px dashed #94a3b8;
@@ -333,12 +316,12 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 900;
       -webkit-text-stroke: 0.6px #0f172a;
       color: #0f172a;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .stub-logo {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 3px auto;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 2px auto;
       display: block;
       border-radius: 50%;
     }
@@ -347,12 +330,22 @@ const htmlContent = `<!DOCTYPE html>
       color: #0f172a;
       font-weight: 800;
       -webkit-text-stroke: 0.35px #0f172a;
-      margin-bottom: 6px;
+      margin-bottom: 1px;
+    }
+    .stub-reg-no {
+      font-size: 0.65rem;
+      font-weight: 800;
+      -webkit-text-stroke: 0.22px #0f172a;
+      color: #0f172a;
+      margin-top: 1px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      letter-spacing: -0.2px;
     }
 
     .stub-banner-wrapper {
       text-align: center;
-      margin: 3px 0 8px 0;
+      margin: 2px 0 6px 0;
     }
     .stub-banner-img {
       height: 30px;
@@ -363,7 +356,7 @@ const htmlContent = `<!DOCTYPE html>
     .stub-body {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
       font-size: 0.92rem;
       color: #1e293b;
     }
@@ -452,7 +445,7 @@ const htmlContent = `<!DOCTYPE html>
       position: relative;
       z-index: 10;
       height: 100%;
-      padding: 34px 46px 26px 46px;
+      padding: 30px 46px 24px 46px;
       display: flex;
       flex-direction: column;
     }
@@ -460,7 +453,7 @@ const htmlContent = `<!DOCTYPE html>
     /* CERTIFICATE HEADER */
     .cert-header {
       text-align: center;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .cert-school-name {
       font-size: 2.38rem;
@@ -468,11 +461,11 @@ const htmlContent = `<!DOCTYPE html>
       -webkit-text-stroke: 0.85px #000;
       color: #000000;
       letter-spacing: 0.5px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .cert-logo {
-      width: 74px;
-      height: 74px;
+      width: 72px;
+      height: 72px;
       margin: 0 auto;
       display: block;
       border-radius: 50%;
@@ -483,16 +476,24 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 800;
       -webkit-text-stroke: 0.45px #0f172a;
       color: #0f172a;
-      margin-top: 3px;
+      margin-top: 2px;
+    }
+    .cert-reg-no {
+      font-size: 0.98rem;
+      font-weight: 800;
+      -webkit-text-stroke: 0.35px #0f172a;
+      color: #0f172a;
+      margin-top: 2px;
+      white-space: nowrap;
     }
 
     /* TITLE BANNER (Clean Vector Banner with Authentic Calligraphy) */
     .cert-banner-wrapper {
       text-align: center;
-      margin: 4px 0 8px 0;
+      margin: 3px 0 6px 0;
     }
     .cert-banner-img {
-      height: 56px;
+      height: 54px;
       display: inline-block;
       filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.2));
     }
@@ -602,7 +603,7 @@ const htmlContent = `<!DOCTYPE html>
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .top-toolbar, .form-panel, .hint-banner, .cut-line-indicator {
+      .top-toolbar, .form-panel, .cut-line-indicator {
         display: none !important;
       }
       .certificate-viewport {
@@ -720,11 +721,6 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </section>
 
-  <div class="hint-banner">
-    <span>💡 <b>টিপস:</b> ফন্ট হিসেবে কালপুরুষ ও সুতন্নী সেট করা হয়েছে। লেখক ও প্রধান শিক্ষক উভয়ের স্বাক্ষর আপলোড করতে পারেন। সম্পূর্ণ প্রত্যয়নপত্রটি A4 সাইজের এক পাতায় নিখুঁতভাবে প্রিন্ট হবে।</span>
-    <span style="font-size: 0.85rem; font-weight: 600;">সাইজ: A4 Landscape (297 × 210 mm)</span>
-  </div>
-
   <!-- CERTIFICATE CANVAS -->
   <main class="certificate-viewport" id="certificateViewport">
     <div class="certificate-sheet" id="certificateSheet">
@@ -735,6 +731,7 @@ const htmlContent = `<!DOCTYPE html>
           <h2 class="stub-school-name" contenteditable="true" id="stub_school_name">প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্</h2>
           <img src="${assets.precadet_logo}" alt="School Logo" class="stub-logo" id="stub_logo_img">
           <div class="stub-address" contenteditable="true" id="stub_address">দেবপুর, বুড়িচং, কুমিল্লা।</div>
+          <div class="stub-reg-no" contenteditable="true" id="stub_reg_no">বাংলাদেশ কিন্ডারগার্টেন এসোসিয়েশন গভ. রেজি.নং- ১০২৮/৯৮/স-৭৩৬</div>
           <div class="stub-banner-wrapper">
             <img src="${assets.stub_banner}" alt="প্রত্যয়নপত্র" class="stub-banner-img">
           </div>
@@ -813,6 +810,7 @@ const htmlContent = `<!DOCTYPE html>
             <h1 class="cert-school-name" contenteditable="true" id="cert_school_name">প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্</h1>
             <img src="${assets.precadet_logo}" alt="School Logo" class="cert-logo" id="cert_logo_img">
             <div class="cert-address" contenteditable="true" id="cert_address">দেবপুর, বুড়িচং, কুমিল্লা।</div>
+            <div class="cert-reg-no" contenteditable="true" id="cert_reg_no">বাংলাদেশ কিন্ডারগার্টেন এসোসিয়েশন গভ. রেজি.নং- ১০২৮/৯৮/স-৭৩৬</div>
           </div>
 
           <!-- Banner Title (Clean Vector Banner with Authentic Calligraphy) -->
@@ -901,11 +899,13 @@ const htmlContent = `<!DOCTYPE html>
       precadet: {
         name: 'প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্',
         address: 'দেবপুর, বুড়িচং, কুমিল্লা।',
+        reg: 'বাংলাদেশ কিন্ডারগার্টেন এসোসিয়েশন গভ. রেজি.নং- ১০২৮/৯৮/স-৭৩৬',
         logo: '${assets.precadet_logo}'
       },
       shawkat: {
         name: 'শওকত ভূঁইয়া চাইল্ড কেয়ার হোমস্',
         address: 'কংশনগর, বুড়িচং, কুমিল্লা',
+        reg: '',
         logo: '${assets.logo}'
       }
     };
@@ -919,6 +919,9 @@ const htmlContent = `<!DOCTYPE html>
 
       document.getElementById('stub_address').innerText = school.address;
       document.getElementById('cert_address').innerText = school.address;
+
+      document.getElementById('stub_reg_no').innerText = school.reg;
+      document.getElementById('cert_reg_no').innerText = school.reg;
 
       document.getElementById('stub_logo_img').src = school.logo;
       document.getElementById('cert_logo_img').src = school.logo;
@@ -1107,4 +1110,5 @@ const htmlContent = `<!DOCTYPE html>
 
 fs.writeFileSync('index.html', htmlContent);
 fs.writeFileSync('প্রত্যয়নপত্র_জেনারেটর.html', htmlContent);
-console.log('index.html and প্রত্যয়নপত্র_জেনারেটর.html successfully rebuilt with all fixes!');
+fs.writeFileSync('প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html', htmlContent);
+console.log('index.html, প্রত্যয়নপত্র_জেনারেটর.html, প্রত্যয়নপত্র_প্রি_ক্যাডেট_হোমস.html successfully rebuilt with all fixes!');
