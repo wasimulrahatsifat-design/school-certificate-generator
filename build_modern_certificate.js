@@ -4,6 +4,9 @@ const path = require('path');
 // Load existing base64 assets
 const assets = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets_base64.json'), 'utf8'));
 
+// Load offline QR Code generator library
+const qrcodeLib = fs.readFileSync(path.join(__dirname, 'qrcode.min.js'), 'utf8');
+
 // Modern SVG Ornate Border Frame with Guilloche & Corner Filigrees
 const modernSvgBorder = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1122 793" width="100%" height="100%" style="position: absolute; top:0; left:0; pointer-events: none; z-index: 2;">
@@ -76,9 +79,9 @@ const modernSvgBorder = `
   </g>
 </svg>`;
 
-// Modern 3D Golden Embossed Seal SVG
+// Mathematically Flawless 3D Golden Embossed Seal SVG (36-tooth radiant starburst, zero clipping)
 const goldSealSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="96" height="96" class="seal-svg-img">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -10 190 190" width="105" height="105" overflow="visible" style="overflow: visible;" class="seal-svg-img">
   <defs>
     <radialGradient id="sealBody" cx="38%" cy="36%" r="65%">
       <stop offset="0%" stop-color="#fff5cc"/>
@@ -93,58 +96,51 @@ const goldSealSvg = `
       <stop offset="100%" stop-color="#540705"/>
     </linearGradient>
     <filter id="sealDrop" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.28"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#000" flood-opacity="0.25"/>
     </filter>
   </defs>
 
   <!-- Hanging Ribbons -->
   <g filter="url(#sealDrop)">
-    <polygon points="65,95 50,155 70,142 85,155 75,95" fill="url(#ribbonGrad)"/>
-    <polygon points="95,95 85,155 100,142 118,155 105,95" fill="url(#ribbonGrad)"/>
+    <polygon points="66,95 50,154 70,140 85,154 74,95" fill="url(#ribbonGrad)"/>
+    <polygon points="94,95 85,154 100,140 120,154 104,95" fill="url(#ribbonGrad)"/>
     <!-- Gold Ribbon Edge Stitching -->
-    <polyline points="53,151 70,138 82,151" fill="none" stroke="#fef08a" stroke-width="1" stroke-dasharray="2,2"/>
-    <polyline points="88,151 100,138 114,151" fill="none" stroke="#fef08a" stroke-width="1" stroke-dasharray="2,2"/>
+    <polyline points="53,150 70,136 82,150" fill="none" stroke="#fef08a" stroke-width="1" stroke-dasharray="2,2"/>
+    <polyline points="88,150 100,136 116,150" fill="none" stroke="#fef08a" stroke-width="1" stroke-dasharray="2,2"/>
   </g>
 
-  <!-- Starburst Medallion (32 teeth) -->
+  <!-- Starburst Medallion (36 mathematically symmetrical teeth) -->
   <g filter="url(#sealDrop)">
-    <path d="
-      M 80,12  L 85,18  L 93,13  L 96,21  L 105,18 L 106,27 L 115,26 L 114,35 L 123,37 L 119,45
-      L 128,49 L 122,57 L 129,63 L 122,70 L 127,78 L 118,83 L 121,92 L 111,95 L 112,104 L 102,105
-      L 99,114 L 90,113 L 85,121 L 78,117 L 71,123 L 67,115 L 58,119 L 56,110 L 47,112 L 47,103
-      L 38,103 L 40,94 L 32,92 L 36,83 L 29,81 L 35,73 L 29,67 L 37,61 L 32,53 L 41,49
-      L 38,41 L 48,39 L 47,30 L 57,30 L 58,21 L 68,23 L 71,14 L 79,18 Z
-    " fill="url(#sealBody)"/>
+    <path d="M 80.0,14.0 L 84.1,21.7 L 89.4,14.8 L 92.0,23.1 L 98.5,17.3 L 99.7,25.9 L 107.0,21.2 L 106.7,29.9 L 114.7,26.6 L 112.9,35.1 L 121.4,33.3 L 118.1,41.3 L 126.8,41.0 L 122.1,48.3 L 130.7,49.5 L 124.9,56.0 L 133.2,58.6 L 126.3,63.9 L 134.0,68.0 L 126.3,72.1 L 133.2,77.4 L 124.9,80.0 L 130.7,86.5 L 122.1,87.7 L 126.8,95.0 L 118.1,94.7 L 121.4,102.7 L 112.9,100.9 L 114.7,109.4 L 106.7,106.1 L 107.0,114.8 L 99.7,110.1 L 98.5,118.7 L 92.0,112.9 L 89.4,121.2 L 84.1,114.3 L 80.0,122.0 L 75.9,114.3 L 70.6,121.2 L 68.0,112.9 L 61.5,118.7 L 60.3,110.1 L 53.0,114.8 L 53.3,106.1 L 45.3,109.4 L 47.1,100.9 L 38.6,102.7 L 41.9,94.7 L 33.2,95.0 L 37.9,87.7 L 29.3,86.5 L 35.1,80.0 L 26.8,77.4 L 33.7,72.1 L 26.0,68.0 L 33.7,63.9 L 26.8,58.6 L 35.1,56.0 L 29.3,49.5 L 37.9,48.3 L 33.2,41.0 L 41.9,41.3 L 38.6,33.3 L 47.1,35.1 L 45.3,26.6 L 53.3,29.9 L 53.0,21.2 L 60.3,25.9 L 61.5,17.3 L 68.0,23.1 L 70.6,14.8 L 75.9,21.7 Z" fill="url(#sealBody)"/>
 
     <!-- Concentric Inner Rings -->
-    <circle cx="80" cy="68" r="48" fill="none" stroke="#ffe58f" stroke-width="2.2"/>
-    <circle cx="80" cy="68" r="44" fill="none" stroke="#8a5c0b" stroke-width="1"/>
-    <circle cx="80" cy="68" r="41" fill="#dfb33e" stroke="#fff" stroke-width="0.8"/>
+    <circle cx="80" cy="68" r="45" fill="none" stroke="#ffe58f" stroke-width="2.2"/>
+    <circle cx="80" cy="68" r="41" fill="none" stroke="#8a5c0b" stroke-width="1"/>
+    <circle cx="80" cy="68" r="38" fill="#dfb33e" stroke="#fff" stroke-width="0.8"/>
 
     <!-- Dashed Security Track -->
-    <circle cx="80" cy="68" r="39" fill="none" stroke="#5a3a02" stroke-width="1" stroke-dasharray="2.5,2"/>
+    <circle cx="80" cy="68" r="36" fill="none" stroke="#5a3a02" stroke-width="1" stroke-dasharray="2.5,2"/>
 
     <!-- Inner Core Medal -->
-    <circle cx="80" cy="68" r="35" fill="url(#sealBody)"/>
+    <circle cx="80" cy="68" r="33" fill="url(#sealBody)"/>
 
-    <!-- Laurel Wreath Leaves & Star Center -->
     <!-- Center 5 Stars -->
     <g fill="#ffffff" filter="drop-shadow(0 1px 1px rgba(0,0,0,0.5))">
-      <!-- Main Star -->
-      <polygon points="80,51 83,59 91,59 85,64 87,72 80,67 73,72 75,64 69,59 77,59" transform="scale(0.85) translate(14, 13)"/>
-      <circle cx="62" cy="68" r="2.2"/>
-      <circle cx="98" cy="68" r="2.2"/>
-      <circle cx="68" cy="79" r="1.8"/>
-      <circle cx="92" cy="79" r="1.8"/>
+      <!-- Main Center Star -->
+      <polygon points="80,52 82.5,59.5 90,59.5 84,64 86,71.5 80,67 74,71.5 76,64 70,59.5 77.5,59.5" transform="scale(0.9) translate(8.8, 7)"/>
+      <circle cx="64" cy="68" r="2.2"/>
+      <circle cx="96" cy="68" r="2.2"/>
+      <circle cx="70" cy="78" r="1.8"/>
+      <circle cx="90" cy="78" r="1.8"/>
     </g>
 
     <!-- Embossed Seal Text along Circle Path -->
-    <path id="sealTextPathTop" d="M 45,68 A 35,35 0 0,1 115,68" fill="none"/>
-    <path id="sealTextPathBottom" d="M 115,68 A 35,35 0 0,1 45,68" fill="none"/>
-    <text font-family="'Cinzel', serif" font-size="7.5" font-weight="900" fill="#422501" letter-spacing="1.2">
+    <path id="sealTextPathTop" d="M 47,68 A 33,33 0 0,1 113,68" fill="none"/>
+    <path id="sealTextPathBottom" d="M 113,68 A 33,33 0 0,1 47,68" fill="none"/>
+    <text font-family="'Cinzel', serif" font-size="7" font-weight="900" fill="#422501" letter-spacing="1.2">
       <textPath href="#sealTextPathTop" startOffset="50%" text-anchor="middle">OFFICIAL SEAL</textPath>
     </text>
-    <text font-family="'Cinzel', serif" font-size="6.8" font-weight="900" fill="#422501" letter-spacing="1">
+    <text font-family="'Cinzel', serif" font-size="6.5" font-weight="900" fill="#422501" letter-spacing="1">
       <textPath href="#sealTextPathBottom" startOffset="50%" text-anchor="middle">★ EXCELLENCE ★</textPath>
     </text>
   </g>
@@ -216,6 +212,24 @@ const modernHtmlContent = `<!DOCTYPE html>
       --theme-highlight: #78350f;
     }
 
+    @font-face {
+      font-family: 'SutonnyMJ';
+      src: url('SutonnyOMJ.ttf') format('truetype'),
+           local('SutonnyMJ'),
+           local('SutonnyOMJ'),
+           local('Sutonny');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'SutonnyMJ';
+      src: local('SutonnyMJ-Bold'),
+           local('SutonnyOMJ-Bold'),
+           url('SutonnyOMJ.ttf') format('truetype');
+      font-weight: bold;
+      font-style: normal;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -225,7 +239,7 @@ const modernHtmlContent = `<!DOCTYPE html>
     body {
       background: #0f172a;
       color: #334155;
-      font-family: 'Hind Siliguri', 'Inter', sans-serif;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', 'SolaimanLipi', 'Tiro Bangla', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -600,7 +614,8 @@ const modernHtmlContent = `<!DOCTYPE html>
       box-shadow: 0 4px 10px rgba(0,0,0,0.12);
     }
     .cert-inst-title {
-      font-size: 1.95rem;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', 'Tiro Bangla', serif;
+      font-size: 2.1rem;
       font-weight: 900;
       color: var(--theme-primary);
       letter-spacing: 0.5px;
@@ -608,21 +623,23 @@ const modernHtmlContent = `<!DOCTYPE html>
       text-shadow: 0 1px 2px rgba(0,0,0,0.06);
     }
     .cert-inst-subtitle {
-      font-family: 'Cinzel', serif;
-      font-size: 0.86rem;
+      font-family: 'Cinzel', 'Playfair Display', serif;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--theme-secondary);
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       margin-top: 1px;
     }
     .cert-inst-address {
-      font-size: 1.02rem;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', 'Tiro Bangla', serif;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #334155;
       margin-top: 1px;
     }
     .cert-reg-badge {
-      font-size: 0.92rem;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', 'Tiro Bangla', serif;
+      font-size: 0.94rem;
       font-weight: 700;
       color: var(--theme-secondary);
       margin-top: 3px;
@@ -654,15 +671,15 @@ const modernHtmlContent = `<!DOCTYPE html>
       font-size: 14px;
     }
     .banner-text-main {
-      font-family: 'Hind Siliguri', serif;
-      font-size: 1.65rem;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', serif;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #ffffff;
       letter-spacing: 1.5px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
     .banner-text-en {
-      font-family: 'Cinzel', serif;
+      font-family: 'Cinzel', 'Playfair Display', serif;
       font-size: 0.75rem;
       font-weight: 800;
       letter-spacing: 3px;
@@ -676,7 +693,8 @@ const modernHtmlContent = `<!DOCTYPE html>
     .cert-body-content {
       position: relative;
       z-index: 5;
-      font-size: 1.14rem;
+      font-family: 'SutonnyMJ', 'SutonnyOMJ', 'Kalpurush', 'SolaimanLipi', 'Tiro Bangla', serif;
+      font-size: 1.18rem;
       line-height: 1.95;
       color: var(--theme-text);
       text-align: justify;
@@ -818,8 +836,9 @@ const modernHtmlContent = `<!DOCTYPE html>
       align-items: center;
       justify-content: flex-end;
       position: relative;
-      width: 140px;
-      min-height: 98px;
+      width: 150px;
+      min-height: 105px;
+      overflow: visible;
     }
     .seal-container {
       position: relative;
@@ -830,27 +849,27 @@ const modernHtmlContent = `<!DOCTYPE html>
       cursor: grab;
       user-select: none;
       touch-action: none;
+      overflow: visible;
       transition: transform 0.05s ease;
     }
     .seal-container:active {
       cursor: grabbing;
     }
 
-    /* Verification QR Badge (Elegantly docked in Top-Right) */
+    /* Verification QR Badge (Clean Live Scannable, No 'VERIFIED' text) */
     .cert-qr-box {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: absolute;
       top: 36px;
-      right: 42px;
+      right: 44px;
       z-index: 20;
-      background: rgba(255, 255, 255, 0.94);
-      padding: 5px 8px;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 6px 6px 4px 6px;
       border-radius: 8px;
-      border: 1px solid rgba(212, 175, 55, 0.7);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      backdrop-filter: blur(4px);
+      border: 1.2px solid rgba(212, 175, 55, 0.7);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -859,21 +878,21 @@ const modernHtmlContent = `<!DOCTYPE html>
     .cert-qr-box:active {
       cursor: grabbing;
     }
-    .cert-qr-header {
-      font-family: 'Cinzel', serif;
-      font-size: 0.58rem;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      color: #8c6409;
-      text-transform: uppercase;
-      margin-bottom: 3px;
+    #live_qrcode_canvas {
       display: flex;
       align-items: center;
-      gap: 3px;
+      justify-content: center;
+      border-radius: 4px;
+      overflow: hidden;
+      min-width: 60px;
+      min-height: 60px;
+    }
+    #live_qrcode_canvas img, #live_qrcode_canvas canvas {
+      display: block;
     }
     .cert-serial-no {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
+      font-family: 'Cinzel', 'EB Garamond', serif;
+      font-size: 0.62rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: 0.8px;
@@ -1219,39 +1238,9 @@ const modernHtmlContent = `<!DOCTYPE html>
           </div>
         </article>
 
-        <!-- Dynamic Verification QR Badge (Top-Right Header Corner) -->
+        <!-- Dynamic Live Scannable Verification QR Code (Top-Right Header Corner) -->
         <div class="cert-qr-box" id="qrContainer" title="মাউস দিয়ে ড্র্যাগ করে ইচ্ছামতো সরানো যায়">
-          <div class="cert-qr-header">
-            <span>🔒</span> VERIFIED
-          </div>
-          <svg width="40" height="40" viewBox="0 0 100 100" fill="#0f172a">
-            <!-- Stylized Crisp QR matrix -->
-            <rect x="0" y="0" width="30" height="30" fill="#0a192f"/>
-            <rect x="5" y="5" width="20" height="20" fill="#fff"/>
-            <rect x="10" y="10" width="10" height="10" fill="#0a192f"/>
-
-            <rect x="70" y="0" width="30" height="30" fill="#0a192f"/>
-            <rect x="75" y="5" width="20" height="20" fill="#fff"/>
-            <rect x="80" y="10" width="10" height="10" fill="#0a192f"/>
-
-            <rect x="0" y="70" width="30" height="30" fill="#0a192f"/>
-            <rect x="5" y="75" width="20" height="20" fill="#fff"/>
-            <rect x="10" y="80" width="10" height="10" fill="#0a192f"/>
-
-            <!-- Data Dots -->
-            <rect x="36" y="10" width="8" height="8"/>
-            <rect x="48" y="10" width="8" height="8"/>
-            <rect x="36" y="24" width="8" height="8"/>
-            <rect x="10" y="44" width="8" height="8"/>
-            <rect x="24" y="44" width="8" height="8"/>
-            <rect x="42" y="42" width="16" height="16" fill="#d4af37"/>
-            <rect x="68" y="44" width="8" height="8"/>
-            <rect x="80" y="44" width="8" height="8"/>
-            <rect x="44" y="70" width="8" height="8"/>
-            <rect x="56" y="70" width="8" height="8"/>
-            <rect x="44" y="84" width="8" height="8"/>
-            <rect x="70" y="76" width="14" height="14"/>
-          </svg>
+          <div id="live_qrcode_canvas"></div>
           <div class="cert-serial-no" id="view_serial">CERT-2026-PC-0142</div>
         </div>
 
@@ -1319,6 +1308,9 @@ const modernHtmlContent = `<!DOCTYPE html>
   </main>
 
   <script>
+    // Inlined Offline Live QR Code Library
+    ${qrcodeLib}
+
     // School Presets
     const SCHOOLS = {
       precadet: {
@@ -1353,6 +1345,31 @@ const modernHtmlContent = `<!DOCTYPE html>
       }
     }
 
+    let qrcodeObj = null;
+    function updateLiveQR() {
+      const qrBox = document.getElementById('live_qrcode_canvas');
+      if (!qrBox || typeof QRCode === 'undefined') return;
+      qrBox.innerHTML = '';
+
+      const school = (document.getElementById('main_school_name') ? document.getElementById('main_school_name').innerText.trim() : '') || 'প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্';
+      const name = document.getElementById('in_name') ? document.getElementById('in_name').value.trim() : 'মো: আবদুর রহমান';
+      const roll = document.getElementById('in_roll') ? document.getElementById('in_roll').value.trim() : '১৬';
+      const cls = document.getElementById('in_class') ? document.getElementById('in_class').value.trim() : 'প্লে';
+      const year = document.getElementById('in_year') ? document.getElementById('in_year').value.trim() : '২০২৬';
+      const serial = document.getElementById('in_serial') ? document.getElementById('in_serial').value.trim() : 'CERT-2026-PC-0142';
+
+      const verifyData = '[' + school + ' - প্রত্যয়নপত্র যাচাই]\\nনাম: ' + name + '\\nরোল: ' + roll + ' | শ্রেণি: ' + cls + ' | শিক্ষাবর্ষ: ' + year + '\\nসনদ ট্র্যাকিং নং: ' + serial + '\\nস্ট্যাটাস: আসল ও পরীক্ষিত (VERIFIED)';
+
+      qrcodeObj = new QRCode(qrBox, {
+        text: verifyData,
+        width: 60,
+        height: 60,
+        colorDark: "#0a192f",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
     function switchSchool(key) {
       const s = SCHOOLS[key];
       if (!s) return;
@@ -1365,6 +1382,7 @@ const modernHtmlContent = `<!DOCTYPE html>
       document.getElementById('main_reg_no').innerText = s.reg;
       document.getElementById('mainCrestImg').src = s.logo;
       document.getElementById('watermarkCrest').style.backgroundImage = 'url(\"' + s.logo + '\")';
+      updateLiveQR();
     }
 
     function toggleDrawer() {
@@ -1435,6 +1453,9 @@ const modernHtmlContent = `<!DOCTYPE html>
       document.getElementById('main_val_class').innerText = cls;
       document.getElementById('main_val_date').innerText = dateVal;
       document.getElementById('view_serial').innerText = serial;
+
+      // Update Live Scannable QR
+      updateLiveQR();
     }
 
     // SIGNATURE UPLOAD & RESIZE
