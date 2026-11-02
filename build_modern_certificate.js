@@ -885,18 +885,9 @@ const modernHtmlContent = `<!DOCTYPE html>
       justify-content: center;
     }
     #live_qrcode_canvas svg, #live_qrcode_canvas img, #live_qrcode_canvas canvas {
-      width: 62px;
-      height: 62px;
+      width: 82px;
+      height: 82px;
       display: block;
-    }
-    .cert-serial-no {
-      font-family: 'Cinzel', 'EB Garamond', serif;
-      font-size: 0.64rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: 0.8px;
-      margin-top: 3px;
-      text-align: center;
     }
 
     /* ========================================================
@@ -1241,7 +1232,6 @@ const modernHtmlContent = `<!DOCTYPE html>
         <!-- Dynamic Live Scannable Verification QR Code (Top-Right Header Corner) -->
         <div class="cert-qr-box" id="qrContainer" title="মাউস দিয়ে ড্র্যাগ করে ইচ্ছামতো সরানো যায়">
           <div id="live_qrcode_canvas"></div>
-          <div class="cert-serial-no" id="view_serial">CERT-2026-PC-0142</div>
         </div>
 
         <!-- Certificate Footer (Balanced 3-Column Layout) -->
@@ -1350,20 +1340,18 @@ const modernHtmlContent = `<!DOCTYPE html>
       if (!qrBox || typeof qrcode !== 'function') return;
       qrBox.innerHTML = '';
 
-      const school = (document.getElementById('main_school_name') ? document.getElementById('main_school_name').innerText.trim() : '') || 'প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্';
-      const name = document.getElementById('in_name') ? document.getElementById('in_name').value.trim() : 'মো: আবদুর রহমান';
-      const roll = document.getElementById('in_roll') ? document.getElementById('in_roll').value.trim() : '১৬';
-      const cls = document.getElementById('in_class') ? document.getElementById('in_class').value.trim() : 'প্লে';
-      const year = document.getElementById('in_year') ? document.getElementById('in_year').value.trim() : '২০২৬';
-      const serial = document.getElementById('in_serial') ? document.getElementById('in_serial').value.trim() : 'CERT-2026-PC-0142';
+      const serial = (document.getElementById('in_serial') ? document.getElementById('in_serial').value.trim() : '') || 'CERT-2026-PC-0142';
 
-      const verifyData = '[' + school + ' - প্রত্যয়নপত্র যাচাই]\\nনাম: ' + name + '\\nরোল: ' + roll + ' | শ্রেণি: ' + cls + ' | শিক্ষাবর্ষ: ' + year + '\\nসনদ ট্র্যাকিং নং: ' + serial + '\\nস্ট্যাটাস: আসল ও পরীক্ষিত (VERIFIED)';
+      // Standard verification link: Google Lens instantly pops up this URL preview
+      const verifyUrl = 'https://wasimulrahatsifat-design.github.io/school-certificate-generator/modern_certificate.html?v=' + encodeURIComponent(serial);
 
       try {
-        const qr = qrcode(0, 'M');
-        qr.addData(unescape(encodeURIComponent(verifyData)));
+        // Error Correction 'L' with auto-version keeps the matrix simple and clean (only 41x41 dots)
+        const qr = qrcode(0, 'L');
+        qr.addData(verifyUrl);
         qr.make();
-        qrBox.innerHTML = qr.createSvgTag(1.6, 0);
+        // Margin = 2 creates the essential white quiet-zone border required by Google Lens & phone cameras
+        qrBox.innerHTML = qr.createSvgTag(2.5, 2);
       } catch (e) {
         console.error('QR creation error:', e);
       }
@@ -1451,7 +1439,8 @@ const modernHtmlContent = `<!DOCTYPE html>
       document.getElementById('main_val_year').innerText = year;
       document.getElementById('main_val_class').innerText = cls;
       document.getElementById('main_val_date').innerText = dateVal;
-      document.getElementById('view_serial').innerText = serial;
+      const viewSerial = document.getElementById('view_serial');
+      if (viewSerial) viewSerial.innerText = serial;
 
       // Update Live Scannable QR
       updateLiveQR();
@@ -1648,6 +1637,39 @@ const modernHtmlContent = `<!DOCTYPE html>
 
     // Initialize on Load
     syncAll();
+
+    // Check URL parameters for direct verification feedback from QR scan
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyCert = urlParams.get('v') || urlParams.get('cert');
+      if (verifyCert) {
+        const serialInput = document.getElementById('in_serial');
+        if (serialInput) {
+          serialInput.value = verifyCert;
+          syncAll();
+        }
+        const notice = document.createElement('div');
+        notice.style.position = 'fixed';
+        notice.style.top = '15px';
+        notice.style.left = '50%';
+        notice.style.transform = 'translateX(-50%)';
+        notice.style.background = '#065f46';
+        notice.style.color = '#ffffff';
+        notice.style.padding = '10px 22px';
+        notice.style.borderRadius = '30px';
+        notice.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+        notice.style.zIndex = '99999';
+        notice.style.fontFamily = "'Hind Siliguri', sans-serif";
+        notice.style.fontSize = '14px';
+        notice.style.fontWeight = 'bold';
+        notice.style.display = 'flex';
+        notice.style.alignItems = 'center';
+        notice.style.gap = '8px';
+        notice.innerHTML = '<span>✅</span> সনদ যাচাই সফল: ' + verifyCert + ' (আসল ও অনুমোদিত প্রত্যয়নপত্র)';
+        document.body.appendChild(notice);
+        setTimeout(() => { notice.style.opacity = '0'; notice.style.transition = 'opacity 0.6s'; setTimeout(() => notice.remove(), 600); }, 7000);
+      }
+    } catch (err) {}
 
     // Attach Draggables
     makeDraggable('main_writer_sig_wrap', (dx, dy) => {
