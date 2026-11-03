@@ -11,7 +11,7 @@ const htmlContent = `<!DOCTYPE html>
   <title>Student Certificate / Testimonial Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -55,7 +55,7 @@ const htmlContent = `<!DOCTYPE html>
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      font-family: 'Inter', system-ui, sans-serif !important;
+      font-family: 'Hind Siliguri', 'Segoe UI', system-ui, sans-serif !important;
     }
 
     .brand-title {
@@ -64,7 +64,7 @@ const htmlContent = `<!DOCTYPE html>
       gap: 12px;
       font-size: 1.15rem;
       font-weight: 700;
-      font-family: 'Inter', sans-serif !important;
+      font-family: 'Hind Siliguri', sans-serif !important;
     }
     .brand-badge {
       background: #f59e0b;
@@ -73,7 +73,7 @@ const htmlContent = `<!DOCTYPE html>
       padding: 3px 8px;
       border-radius: 4px;
       font-weight: 800;
-      font-family: 'Inter', sans-serif !important;
+      font-family: 'Hind Siliguri', sans-serif !important;
     }
 
     .school-selector-wrap {
@@ -89,7 +89,7 @@ const htmlContent = `<!DOCTYPE html>
       font-size: 0.88rem;
       font-weight: 600;
       color: #f8fafc;
-      font-family: 'Inter', sans-serif !important;
+      font-family: 'Hind Siliguri', sans-serif !important;
     }
     .school-select {
       background: #1e293b;
@@ -98,7 +98,7 @@ const htmlContent = `<!DOCTYPE html>
       padding: 5px 10px;
       border-radius: 4px;
       font-size: 0.9rem;
-      font-family: 'Inter', sans-serif !important;
+      font-family: 'Hind Siliguri', sans-serif !important;
       outline: none;
       cursor: pointer;
     }
@@ -118,7 +118,7 @@ const htmlContent = `<!DOCTYPE html>
       border-radius: 6px;
       font-size: 0.9rem;
       font-weight: 600;
-      font-family: 'Inter', sans-serif !important;
+      font-family: 'Hind Siliguri', sans-serif !important;
       cursor: pointer;
       border: none;
       transition: all 0.2s ease;
@@ -459,6 +459,25 @@ const htmlContent = `<!DOCTYPE html>
       flex-direction: column;
       gap: 8px;
     }
+    .stub-writer-date > div {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      width: 145px;
+    }
+    .stub-writer-date .stub-dotted-wrap {
+      flex: 1;
+      display: inline-flex;
+      position: relative;
+      align-items: baseline;
+    }
+    .stub-writer-date .stub-dotted-wrap .stub-field {
+      width: 100% !important;
+    }
+    .stub-writer-date > div > .stub-field {
+      flex: 1;
+      width: auto !important;
+    }
     .stub-headmaster-col {
       display: flex;
       flex-direction: column;
@@ -545,6 +564,7 @@ const htmlContent = `<!DOCTYPE html>
       width: 82px;
       height: 82px;
       display: block;
+      shape-rendering: crispEdges;
     }
 
     /* CERTIFICATE INNER CONTENT */
@@ -664,10 +684,22 @@ const htmlContent = `<!DOCTYPE html>
       gap: 6px;
       font-family: 'EB Garamond', serif;
       font-size: 1.15rem;
+      width: 290px;
+    }
+    .footer-left-row .footer-dotted-wrap {
+      flex: 1;
+      display: inline-flex;
+      position: relative;
+      align-items: baseline;
+    }
+    .footer-left-row .footer-dotted-wrap .footer-dotted {
+      width: 100%;
+    }
+    .footer-left-row > .footer-dotted {
+      flex: 1;
     }
     .footer-dotted {
       border-bottom: 2px dotted #475569;
-      min-width: 200px;
       display: inline-block;
       padding-left: 6px;
       font-weight: 800 !important; /* Right side: BOLD */
@@ -738,27 +770,27 @@ const htmlContent = `<!DOCTYPE html>
   <!-- TOP TOOLBAR -->
   <header class="top-toolbar">
     <div class="brand-title">
-      <span>🏫 Certificate Generator</span>
-      <span class="brand-badge">English Version / A4 Landscape</span>
+      <span>🏫 প্রত্যয়নপত্র জেনারেটর</span>
+      <span class="brand-badge">বাংলা ফন্ট / A4 ল্যান্ডস্কেপ</span>
     </div>
 
     <!-- SCHOOL SELECTOR -->
     <div class="school-selector-wrap">
-      <label>School:</label>
+      <label>স্কুল নির্বাচন:</label>
       <select class="school-select" id="schoolSelector" onchange="switchSchool(this.value)">
-        <option value="precadet" selected>🏫 Pre-Cadet Child Care Homes</option>
-        <option value="shawkat">🏫 Shawkat Bhuiyan Child Care Homes</option>
+        <option value="precadet" selected>🏫 প্রি-ক্যাডেট চাইল্ড কেয়ার হোমস্</option>
+        <option value="shawkat">🏫 শওকত ভূঁইয়া চাইল্ড কেয়ার হোমস্</option>
       </select>
     </div>
 
     <div class="action-buttons">
-      <a href="index.html" class="btn btn-lang">🇧🇩 বাংলা ভার্সন</a>
-      <button type="button" id="btnToggleQR" class="btn" style="background:#0d9488; color:#fff;" onclick="toggleQR();">📱 QR: ON</button>
-      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ Edit Form & Signatures</button>
-      <button class="btn btn-warning" onclick="loadSampleData()">⭐ Sample Data</button>
-      <button class="btn btn-secondary" onclick="clearToBlank()">📄 Blank Form</button>
-      <button class="btn btn-success" onclick="printCertificate()">🖨️ Print / PDF</button>
-      <button class="btn btn-primary" onclick="downloadAsImage()">🖼️ Image (PNG)</button>
+      <a href="index.html" class="btn" style="background:#0284c7; color:#fff;">🇧🇩 বাংলা ভার্সন</a>
+      <button type="button" id="btnToggleQR" class="btn" style="background:#0d9488; color:#fff;" onclick="toggleQR();">📱 কিউআর: অন</button>
+      <button class="btn btn-primary" onclick="toggleFormPanel()">✏️ তথ্য ও স্বাক্ষর ফরম</button>
+      <button class="btn btn-warning" onclick="loadSampleData()">⭐ নমুনা ডেটা</button>
+      <button class="btn btn-secondary" onclick="clearToBlank()">📄 খালি ফরম</button>
+      <button class="btn btn-success" onclick="printCertificate()">🖨️ প্রিন্ট / PDF</button>
+      <button class="btn btn-primary" onclick="downloadAsImage()">🖼️ ছবি (PNG)</button>
     </div>
   </header>
 
@@ -802,10 +834,7 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="form-group">
       <label>Tracking Serial No:</label>
-      <div style="display: flex; gap: 6px;">
-        <input type="text" id="input_serial" value="CERT-2026-PC-0142" style="flex: 1;" oninput="updateLiveQR()">
-        <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 4px 10px; white-space: nowrap;" onclick="incrementSerial()" title="Advance to next serial number">+ Next No</button>
-      </div>
+      <input type="text" id="input_serial" value="CERT-2026-PC-0142" oninput="updateLiveQR()">
     </div>
 
     <!-- SIGNATURE UPLOADS & RESIZING -->
@@ -859,7 +888,7 @@ const htmlContent = `<!DOCTYPE html>
           <div class="stub-address" contenteditable="true" id="stub_address">Debpur, Burichang, Cumilla.</div>
           <div class="stub-reg-no" contenteditable="true" id="stub_reg_no">Bangladesh Kindergarten Association Govt. Reg. No. 1028/98/736</div>
           <div class="stub-banner-wrapper">
-            <img src="${assets.stub_banner_en}" alt="CERTIFICATE" class="stub-banner-img">
+            <img src="${assets.stub_banner_en}" alt="CERTIFICATE" class="stub-banner-img" id="stub_banner_img">
           </div>
         </div>
 
@@ -902,9 +931,9 @@ const htmlContent = `<!DOCTYPE html>
 
         <div class="stub-footer">
           <div class="stub-writer-date">
-            <div style="display:flex; align-items:baseline; gap:4px; position: relative;">
+            <div style="position: relative;">
               <span>Prepared:</span>
-              <div style="position: relative; flex-grow: 1; display: inline-flex; align-items: baseline;">
+              <div class="stub-dotted-wrap">
                 <div id="stub_writer_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 2px; left: 5px; z-index: 5;" title="Click and drag to position anywhere">
                   <div class="sig-size-ctrls" onclick="event.stopPropagation();">
                     <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', -4);" title="Make smaller">−</button>
@@ -918,12 +947,12 @@ const htmlContent = `<!DOCTYPE html>
                   </div>
                   <img id="stub_writer_sig_img" class="stub-sig-img" src="" alt="Signature">
                 </div>
-                <span class="stub-field" style="width: 100px;" id="stub_view_writer"></span>
+                <span class="stub-field" id="stub_view_writer"></span>
               </div>
             </div>
-            <div style="display:flex; align-items:baseline; gap:4px;">
+            <div>
               <span>Date:</span>
-              <span class="stub-field" style="width: 100px;" id="stub_view_date"></span>
+              <span class="stub-field" id="stub_view_date"></span>
             </div>
           </div>
           <div class="stub-headmaster-col">
@@ -967,9 +996,9 @@ const htmlContent = `<!DOCTYPE html>
             <div class="cert-reg-no" contenteditable="true" id="cert_reg_no">Bangladesh Kindergarten Association Govt. Reg. No. 1028/98/736</div>
           </div>
 
-          <!-- Banner Title (Vector Banner) -->
+          <!-- Banner Title (Bold English Vector Banner) -->
           <div class="cert-banner-wrapper">
-            <img src="${assets.clean_banner_en}" alt="CERTIFICATE" class="cert-banner-img">
+            <img src="${assets.clean_banner_en}" alt="CERTIFICATE" class="cert-banner-img" id="cert_banner_img">
           </div>
 
           <!-- Body Text -->
@@ -1022,7 +1051,7 @@ const htmlContent = `<!DOCTYPE html>
             <div class="footer-left">
               <div class="footer-left-row" style="position: relative;">
                 <span>Prepared by:</span>
-                <div style="position: relative; display: inline-flex; align-items: baseline;">
+                <div class="footer-dotted-wrap">
                   <div id="main_writer_sig_wrap" class="sig-zone" style="display: none; position: absolute; bottom: 2px; left: 15px; z-index: 5;" title="Click and drag to position anywhere">
                     <div class="sig-size-ctrls" onclick="event.stopPropagation();">
                       <button type="button" class="btn-sig-adj" onclick="adjustSigSize('writer', -4);" title="Make smaller">−</button>
@@ -1103,6 +1132,66 @@ const htmlContent = `<!DOCTYPE html>
       writer: { x: 0, y: 0 },
       headmaster: { x: 0, y: 0 }
     };
+    let qrPosition = { x: 0, y: 0 };
+    let isQRVisible = true;
+
+    // Position & Signature Persistence
+    const POS_STORAGE_KEY = 'cert_en_positions_v1';
+    const SIG_WRITER_KEY = 'cert_saved_sig_writer';
+    const SIG_HEADMASTER_KEY = 'cert_saved_sig_headmaster';
+
+    function saveLayoutPositions() {
+      try {
+        const payload = {
+          sigPositions,
+          stubSigPositions,
+          qrPosition,
+          writerSigSize,
+          headmasterSigSize,
+          isQRVisible
+        };
+        localStorage.setItem(POS_STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {}
+    }
+
+    function loadLayoutPositions() {
+      try {
+        const raw = localStorage.getItem(POS_STORAGE_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.sigPositions) {
+            if (data.sigPositions.writer) sigPositions.writer = data.sigPositions.writer;
+            if (data.sigPositions.headmaster) sigPositions.headmaster = data.sigPositions.headmaster;
+          }
+          if (data.stubSigPositions) {
+            if (data.stubSigPositions.writer) stubSigPositions.writer = data.stubSigPositions.writer;
+            if (data.stubSigPositions.headmaster) stubSigPositions.headmaster = data.stubSigPositions.headmaster;
+          }
+          if (data.qrPosition) {
+            qrPosition = data.qrPosition;
+          }
+          if (data.writerSigSize) writerSigSize = data.writerSigSize;
+          if (data.headmasterSigSize) headmasterSigSize = data.headmasterSigSize;
+          if (data.isQRVisible !== undefined) isQRVisible = data.isQRVisible;
+        }
+      } catch (e) {}
+
+      applySigPos('writer');
+      applySigPos('headmaster');
+      applyStubSigPos('writer');
+      applyStubSigPos('headmaster');
+      applyQRPos();
+      toggleQR(isQRVisible);
+      resizeSig('writer', writerSigSize);
+      resizeSig('headmaster', headmasterSigSize);
+
+      try {
+        const savedWriter = localStorage.getItem(SIG_WRITER_KEY);
+        if (savedWriter) setSignature('writer', savedWriter, false);
+        const savedHeadmaster = localStorage.getItem(SIG_HEADMASTER_KEY);
+        if (savedHeadmaster) setSignature('headmaster', savedHeadmaster, false);
+      } catch (e) {}
+    }
 
     function applySigPos(type) {
       const pos = sigPositions[type];
@@ -1126,18 +1215,21 @@ const htmlContent = `<!DOCTYPE html>
       sigPositions[type].x = Math.max(-120, Math.min(120, sigPositions[type].x + dx));
       sigPositions[type].y = Math.max(-80, Math.min(60, sigPositions[type].y + dy));
       applySigPos(type);
+      saveLayoutPositions();
     }
 
     function moveStubSig(type, dx, dy) {
       stubSigPositions[type].x = Math.max(-60, Math.min(60, stubSigPositions[type].x + dx));
       stubSigPositions[type].y = Math.max(-40, Math.min(40, stubSigPositions[type].y + dy));
       applyStubSigPos(type);
+      saveLayoutPositions();
     }
 
     function resetStubSigPos(type) {
       stubSigPositions[type].x = 0;
       stubSigPositions[type].y = 0;
       applyStubSigPos(type);
+      saveLayoutPositions();
     }
 
     function setSigPos(type, axis, val) {
@@ -1145,6 +1237,7 @@ const htmlContent = `<!DOCTYPE html>
       if (isNaN(val)) return;
       sigPositions[type][axis] = val;
       applySigPos(type);
+      saveLayoutPositions();
     }
 
     function resetSigPos(type) {
@@ -1153,6 +1246,7 @@ const htmlContent = `<!DOCTYPE html>
       stubSigPositions[type].x = 0;
       stubSigPositions[type].y = 0;
       applySigPos(type);
+      saveLayoutPositions();
     }
 
     function makeElementDraggable(elId, getPos, setPos, onUpdate) {
@@ -1199,6 +1293,7 @@ const htmlContent = `<!DOCTYPE html>
         document.removeEventListener('mouseup', onPointerUp);
         document.removeEventListener('touchmove', onPointerMove);
         document.removeEventListener('touchend', onPointerUp);
+        saveLayoutPositions();
       }
 
       el.addEventListener('mousedown', onPointerDown);
@@ -1278,7 +1373,14 @@ const htmlContent = `<!DOCTYPE html>
       reader.readAsDataURL(file);
     }
 
-    function setSignature(type, dataUrl) {
+    function setSignature(type, dataUrl, shouldPersist = true) {
+      if (shouldPersist) {
+        try {
+          const key = type === 'writer' ? SIG_WRITER_KEY : SIG_HEADMASTER_KEY;
+          if (dataUrl) localStorage.setItem(key, dataUrl);
+          else localStorage.removeItem(key);
+        } catch(e) {}
+      }
       if (type === 'writer') {
         const mainWrap = document.getElementById('main_writer_sig_wrap');
         const mainImg = document.getElementById('main_writer_sig_img');
@@ -1372,6 +1474,7 @@ const htmlContent = `<!DOCTYPE html>
         if (slider) slider.value = size;
         if (valText) valText.innerText = size + 'px';
       }
+      saveLayoutPositions();
     }
 
     function adjustSigSize(type, delta) {
@@ -1416,7 +1519,6 @@ const htmlContent = `<!DOCTYPE html>
 
     function printCertificate() {
       window.print();
-      setTimeout(incrementSerial, 1500);
     }
 
     function downloadAsImage() {
@@ -1437,35 +1539,10 @@ const htmlContent = `<!DOCTYPE html>
         link.download = 'Certificate_' + schoolTitle + '_' + (document.getElementById('input_name').value || 'Sample') + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-        setTimeout(incrementSerial, 1000);
       }).catch(err => {
         if (cutLine) cutLine.style.display = 'block';
         alert('Image generation failed: ' + err.message);
       });
-    }
-
-    function incrementSerial() {
-      const serialInput = document.getElementById('input_serial');
-      if (!serialInput) return;
-      const cur = serialInput.value.trim();
-      const match = cur.match(/^(.*?)(\\d+)$/);
-      if (match) {
-        const prefix = match[1];
-        const numStr = match[2];
-        const nextNum = parseInt(numStr, 10) + 1;
-        const padded = String(nextNum).padStart(numStr.length, '0');
-        serialInput.value = prefix + padded;
-      } else {
-        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
-        const code = schoolKey === 'shawkat' ? 'SB' : 'PC';
-        const year = document.getElementById('input_year') ? document.getElementById('input_year').value.trim() : '2026';
-        serialInput.value = 'CERT-' + year + '-' + code + '-0143';
-      }
-      try {
-        const schoolKey = document.getElementById('schoolSelector') ? document.getElementById('schoolSelector').value : 'precadet';
-        localStorage.setItem('last_serial_en_' + schoolKey, serialInput.value);
-      } catch (e) {}
-      updateLiveQR();
     }
 
     // Initialize Draggables
@@ -1519,7 +1596,6 @@ const htmlContent = `<!DOCTYPE html>
       }
     }
 
-    let isQRVisible = true;
     function toggleQR(show) {
       if (show === undefined) isQRVisible = !isQRVisible;
       else isQRVisible = !!show;
@@ -1527,12 +1603,12 @@ const htmlContent = `<!DOCTYPE html>
       if (el) el.style.display = isQRVisible ? 'flex' : 'none';
       const btn = document.getElementById('btnToggleQR');
       if (btn) {
-        btn.innerText = isQRVisible ? '📱 QR: ON' : '📱 QR: OFF';
+        btn.innerText = isQRVisible ? '📱 কিউআর: অন' : '📱 কিউআর: অফ';
         btn.style.background = isQRVisible ? '#0d9488' : '#64748b';
       }
+      saveLayoutPositions();
     }
 
-    let qrPosition = { x: 0, y: 0 };
     function applyQRPos() {
       const el = document.getElementById('main_qr_container');
       if (el) el.style.transform = 'translate(' + qrPosition.x + 'px, ' + qrPosition.y + 'px)';
@@ -1540,6 +1616,7 @@ const htmlContent = `<!DOCTYPE html>
     function resetQRPos() {
       qrPosition = { x: 0, y: 0 };
       applyQRPos();
+      saveLayoutPositions();
     }
 
     makeElementDraggable('main_qr_container', () => qrPosition, (x, y) => {
@@ -1547,8 +1624,9 @@ const htmlContent = `<!DOCTYPE html>
       qrPosition.y = Math.max(-20, Math.min(250, y));
     }, applyQRPos);
 
-    // Initial QR render
+    // Initial QR render & restore saved positions from localStorage
     updateLiveQR();
+    loadLayoutPositions();
   </script>
 </body>
 </html>`;
